@@ -5,6 +5,13 @@
   "repository": "https://github.com/luizbp/donations_web_api.git",
   "author": "Luiz Carlos B Pereira <carlinhospereira12@hotmail.com>",
   "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": ""
+    }
+  },
+  "lint-staged": {
+  },
   "dependencies": {
     "express": "^4.17.2"
   },
