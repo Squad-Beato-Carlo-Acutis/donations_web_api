@@ -4,7 +4,7 @@ import { ControllerModelInterface } from "../../common/ControllerModelInterface"
 //  - Implementar o sequelize e o mysql:
 // - http://www.macoratti.net/17/01/node_sequelize1.html
 const insert = async () => {
-  return false;
+  return true;
 }
 
 type UserModel = {

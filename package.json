@@ -7,7 +7,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test"
+      "pre-commit": "yarn jest"
     }
   },
   "lint-staged": {},
