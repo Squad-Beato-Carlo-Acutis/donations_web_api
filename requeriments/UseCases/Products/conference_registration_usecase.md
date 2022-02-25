@@ -1,16 +1,10 @@
-# Cadastro de clientes
+# Cadastro de Conferencias
 
 ## Descrição
-Rota que irá receber um payload com as informações do usuario
+Rota que irá o cadastro de conferencia por usuário
 
 ## SUCCESS: Cadastro
-Dado que recebo o payload com as informações do usuário sendo elas:
-  `{ email: string, pws: string, username: string}`
-Quando finalizar a validação dos campos
-E o campo `pws` ser criptografado com alguma tecnologia de criptografia segura
-E finalizar o registro das informações no banco MYSQL
-Então a rota retorna um HTTP response code `200` com o response `JSON` 
-  `{id: number, email: string, statusCode: 200}`
+
 
 ## EXCEPTION: Falta alguma informação
 Dado que recebo o payload com as informações do usuário especificadas acima

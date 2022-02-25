@@ -1,22 +1,29 @@
-# Cadastro de clientes
+# Validação de usuário e liberação de token para login
 
 ## Descrição
-Rota que irá receber um payload com as informações do usuario
+Rota que irá realizar o login do usuário no sistema.
 
-## SUCCESS: Cadastro
+## SUCCESS: Validação
 Dado que recebo o payload com as informações do usuário sendo elas:
-  `{ email: string, pws: string, username: string}`
+  `{ email: string, pws: string}`
 Quando finalizar a validação dos campos
 E o campo `pws` ser criptografado com alguma tecnologia de criptografia segura
-E finalizar o registro das informações no banco MYSQL
-Então a rota retorna um HTTP response code `200` com o response `JSON` 
-  `{id: number, email: string, statusCode: 200}`
+E verificar se o usuario com esse `email` e `pws` estão cadastrados no banco na `tab_users`
+Então vai ser gerado um token de acesso com expiração em `X` horas
+E a rota retorna um HTTP response code `200` com o response `JSON`
+  `{token: string}`
 
 ## EXCEPTION: Falta alguma informação
 Dado que recebo o payload com as informações do usuário especificadas acima
 Quando verifico que algum campos esta `nulo` ou `vazio`
 Então a rota retorna um HTTP response code `400` com o response `JSON`
   `{errorMessage: "O campo $ não foi preenchido", statusCode: 400}`
+
+## EXCEPTION: Usuario não encontrado
+Dado que recebo o payload com as informações do usuário especificadas acima
+Quando verifico que o usuario não existe
+Então a rota retorna um HTTP response code `406` com o response `JSON`
+  `{errorMessage: "Usuário não encontrado", statusCode: 406}`
 
 ## EXCEPTION: Erro padrão
 Dado que recebo o payload com as informações do usuário especificadas acima
