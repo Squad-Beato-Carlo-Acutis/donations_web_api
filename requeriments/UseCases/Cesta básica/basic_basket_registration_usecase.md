@@ -106,7 +106,7 @@ E a rota retorna um HTTP response code `200` com o response `JSON`
 }
 ```
 
-## Cenário: Cest básica não encontrada
+## Cenário: Cesta básica não encontrada
 
 Dado que recebo o payload com as informações da cesta básica especificadas acima
 

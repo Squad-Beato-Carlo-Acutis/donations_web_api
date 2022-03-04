@@ -4,7 +4,7 @@
 
 Cadastrar, atualizar e deletar um usuário do sistema
 
-## SUCCESS: Cadastro
+## Cenário: Cadastro
 
 Dado que acesso a rota de usuário
 

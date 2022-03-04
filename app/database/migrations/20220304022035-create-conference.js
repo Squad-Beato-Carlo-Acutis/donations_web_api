@@ -2,22 +2,34 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-     await queryInterface.createTable('tab_users', {
+    await queryInterface.createTable('tb_conferences', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
       },
-      email: {
+      description: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      pws: {
+      link_avatar: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      about: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      username: {
+      title_address: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      opening_hours: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -37,6 +49,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tab_users');
+    await queryInterface.dropTable('tb_conferences');
   }
 };
