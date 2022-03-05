@@ -9,6 +9,13 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
+      tb_users_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'tb_users', key: 'id'},
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       description: {
         type: Sequelize.STRING,
         allowNull: false

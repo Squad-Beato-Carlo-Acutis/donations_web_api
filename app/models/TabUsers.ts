@@ -1,8 +1,15 @@
 import { DataTypes, Model, ModelStatic } from "sequelize";
 
-class TabUser extends Model {
-  static init(sequelize: any) {
-    return super.init({
+export type TypeTabUsers = {
+  email: string,
+  pws: string,
+  username: string,
+  ind_active: string,
+};
+
+export class TabUsers extends Model<TypeTabUsers> {
+  static initialize(sequelize: any){
+    this.init({
       email: DataTypes.STRING,
       pws: DataTypes.STRING,
       username: DataTypes.STRING,
@@ -11,6 +18,9 @@ class TabUser extends Model {
       sequelize
     })
   }
-}
 
-export { TabUser }
+
+  static associate(models: any){
+    this.hasMany(models.TabConfereces, { foreignKey: 'tb_users_id', as: 'confereces'})
+  }
+}
