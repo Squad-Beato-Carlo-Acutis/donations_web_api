@@ -6,9 +6,7 @@ export class UserTableController implements InterfaceDatabaseController{
     return await TabUsers.findAll();
   }
   async searchAll(): Promise<Record<string, any>> {
-    const teste = await TabUsers.findAll()
-    console.log('TESTE AQUI => ', teste)
-    return teste;
+    return await TabUsers.findAll();
   }
   async save(params: Record<string, any>): Promise<Record<string, any>> {
     throw new Error("Method not implemented.");

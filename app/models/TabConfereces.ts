@@ -23,7 +23,8 @@ export class TabConfereces extends Model<TypeTabConfereces> {
       opening_hours: DataTypes.STRING,
       ind_active: DataTypes.BOOLEAN,
     }, {
-      sequelize
+      sequelize,
+      tableName: 'tb_conferences'
     })
   }
 

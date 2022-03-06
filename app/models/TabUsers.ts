@@ -15,7 +15,8 @@ export class TabUsers extends Model<TypeTabUsers> {
       username: DataTypes.STRING,
       ind_active: DataTypes.BOOLEAN,
     }, {
-      sequelize
+      sequelize,
+      tableName: 'tb_users'
     })
   }
 
