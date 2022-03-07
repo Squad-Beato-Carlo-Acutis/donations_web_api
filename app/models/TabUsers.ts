@@ -4,7 +4,7 @@ export type TypeTabUsers = {
   email: string,
   pws: string,
   username: string,
-  ind_active: string,
+  ind_active: boolean,
 };
 
 export class TabUsers extends Model<TypeTabUsers> {
