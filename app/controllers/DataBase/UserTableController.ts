@@ -1,62 +1,33 @@
-import * as yup from "yup";
-import { string } from "yup/lib/locale";
-import { encryptSha512 } from "../../helpers/encryptSha512";
-import { TabUsers, TypeTabUsers } from "../../models/TabUsers";
-import { InterfaceDatabaseController } from "./InterfaceDatabaseController";
+import { UserTableRepository } from "../../repository/UserTableRepository";
 
-export class UserTableController implements InterfaceDatabaseController {
-  async fieldValidation(user: TypeTabUsers): Promise<boolean> {
-    let schema = yup.object().shape({
-      email: yup.string().required(),
-      pws: yup.string().required(),
-      username: yup.string().required(),
-      ind_active: yup.boolean().notRequired(),
-    });
+// UserTableController
+export const UserTableController = {
+  getAll: async (req: any, res: any) => {
+    const userController = new UserTableRepository();
+    res.json(await userController.searchAll());
+  },
 
-    return await schema.isValid(user);
-  }
+  create: async (req: any, res: any) => {
+    const userController = new UserTableRepository();
+    res.json(await userController.create(req.body));
+  },
 
-  async searchById(params?: Record<string, any>): Promise<Record<any, any>> {
-    const { user_id }: any = params;
-    if (!user_id) throw new Error("Paramêtros ´user_id´ está vazio");
-    let response = {};
+  update: async (req: any, res: any) => {
+    const { userId } = req.params
+    const userController = new UserTableRepository();
+    res.json(await userController.update(userId, req.body));
+  },
 
-    const user = await TabUsers.findByPk(user_id);
-    response = user ? user.toJSON() : {};
-    return response;
-  }
-  async search(params?: Record<string, any>): Promise<Record<string, any>> {
-    return {};
-  }
-  async searchAll(): Promise<Record<string, any>> {
-    return await TabUsers.findAll();
-  }
+  getById: async (req: any, res: any) => {
+    const { userId } = req.params
+    const userController = new UserTableRepository();
+    res.json(await userController.searchById(userId));
+  },
 
-  async create(params: Record<string, any>): Promise<Record<string, any>> {
-    const { email, pws, username, ind_active } = params;
-    this.fieldValidation({
-      email,
-      username,
-      pws,
-      ind_active,
-    });
-    const encryptedPassword = encryptSha512(pws);
-
-    const user = await TabUsers.create({
-      email,
-      pws: encryptedPassword,
-      username,
-      ind_active: true,
-    });
-
-    return user;
-  }
-
-  async update(params: Record<string, any>): Promise<Record<string, any>> {
-    throw new Error("Method not implemented.");
-  }
-
-  async delete(id: number): Promise<Record<string, any>> {
-    throw new Error("Method not implemented.");
+  delete: async (req: any, res: any) => {
+    const { userId } = req.params
+    const userController = new UserTableRepository();
+    await userController.delete(userId)
+    res.status(204).json();
   }
 }
