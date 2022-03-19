@@ -1,6 +1,7 @@
 import { DataTypes, Model, ModelStatic } from "sequelize";
 
 export type TypeTabUsers = {
+  id?: number
   email: string,
   pws: string,
   username: string,

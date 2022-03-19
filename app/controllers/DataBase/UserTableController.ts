@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { pt } from 'yup-locale-pt';
 import { TypeTabUsers } from "../../models/TabUsers";
 import { UserTableRepository } from "../../repository/UserTableRepository";
 
@@ -8,6 +9,7 @@ export const UserTableController = {
     user: TypeTabUsers,
     typeValidation: "create" | "update" = "create"
   ): Promise<boolean> => {
+    yup.setLocale(pt);
     let schema =
       typeValidation === "create"
         ? yup.object().shape({
@@ -33,14 +35,22 @@ export const UserTableController = {
 
     // Validação de campos do formulário
     if (result.name === "ValidationError") {
-      throw new Error(result.message);
+      throw result.message;
     }
 
     return true;
   },
   getAll: async (req: any, res: any) => {
-    const userRepository = new UserTableRepository();
-    res.json(await userRepository.searchAll())
+    try {
+      const userRepository = new UserTableRepository();
+      res.status(200).json(await userRepository.searchAll());
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro ao tentar buscar todosos usuários",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
   },
 
   create: async (req: any, res: any) => {
@@ -48,41 +58,93 @@ export const UserTableController = {
       const userRepository = new UserTableRepository();
       const userData = req.body;
       await UserTableController.fieldValidation(userData, "create");
-      const user:any = await userRepository.create(userData)
-      const dadosUser = user.toJSON()
+      const user = (await userRepository.create(userData)).toJSON();
 
-      res.json({
-        id: dadosUser.id,
-        email: dadosUser.email, 
+      res.status(200).json({
+        id: user.id,
+        email: user.email,
+        username: user.username,
         responseInfo: {
-          statusCode: 200, 
-          msg: "Usuário cadastrado com sucesso"
-        }
-      })
-    } catch (error) {}
+          statusCode: 200,
+          msg: "Usuário cadastrado com sucesso",
+        },
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro na criação do usuário.",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
   },
 
   update: async (req: any, res: any) => {
-    const { userId } = req.params;
-    const user = req.body;
-    await UserTableController.fieldValidation(user, "update");
-    const userRepository = new UserTableRepository();
-    res.json(await userRepository.update(userId, user));
+    try {
+      const { userId } = req.params;
+      if (!userId) throw new Error("ID do usuário não informado");
+      const userData = req.body;
+      await UserTableController.fieldValidation(userData, "update");
+      const userRepository = new UserTableRepository();
+      const user = (await userRepository.update(userId, userData)).toJSON()
+
+      res.status(200).json({
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        responseInfo: {
+          statusCode: 200,
+          msg: "Usuário atualizado com sucesso",
+        },
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro na atualização do usuário.",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
   },
 
   getById: async (req: any, res: any) => {
-    const { userId } = req.params;
+    try {
+      const { userId } = req.params;
 
-    if (!userId) throw new Error("ID do usuário não informado");
+      if (!userId) throw new Error("ID do usuário não informado");
 
-    const userRepository = new UserTableRepository();
-    res.json(await userRepository.searchById(userId));
+      const userRepository = new UserTableRepository();
+      const user = (await userRepository.searchById(userId)).toJSON()
+      res.status(200).json({
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        responseInfo: {
+          statusCode: 200,
+          msg: "Usuário encontrado com sucesso",
+        },
+      });
+    } catch (error: any) {
+      console.log(error)
+      res.status(400).json({
+        errorMessage: "Erro ao procurar usuário pelo ID",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
   },
 
   delete: async (req: any, res: any) => {
-    const { userId } = req.params;
-    const userRepository = new UserTableRepository();
-    await userRepository.delete(userId);
-    res.status(204).json();
+    try {
+      const { userId } = req.params;
+      if (!userId) throw new Error("ID do usuário não informado");
+      const userRepository = new UserTableRepository();
+      await userRepository.delete(userId);
+      res.status(204).json();
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro ao tentar deletar o usuário",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
   },
 };

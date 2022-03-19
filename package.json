@@ -17,7 +17,8 @@
     "express": "^4.17.2",
     "mysql2": "^2.3.3",
     "sequelize": "^6.16.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "yup-locale-pt": "^0.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",

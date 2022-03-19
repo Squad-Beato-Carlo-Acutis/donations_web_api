@@ -1,17 +1,17 @@
-
 import { encryptSha512 } from "../helpers/encryptSha512";
 import { TabUsers, TypeTabUsers } from "../models/TabUsers";
 
 export class UserTableRepository {
-  
-
-  async searchById(userId: number): Promise<TabUsers | {}> {
+  async searchById(userId: number): Promise<TabUsers> {
     const user = await TabUsers.findByPk(userId);
-    return user ? user.toJSON() : {};
+    if (!user) throw new Error("Usuário não encontrado");
+    return user
   }
 
   async searchAll(): Promise<Array<TabUsers>> {
-    return await TabUsers.findAll();
+    return await TabUsers.findAll({
+      attributes: ['id', 'email', 'username']
+    });
   }
 
   async create(user: TypeTabUsers): Promise<TabUsers> {
@@ -28,9 +28,6 @@ export class UserTableRepository {
   }
 
   async update(userId: number, data: TypeTabUsers): Promise<TabUsers> {
-    
-    if (!userId) throw new Error("ID do usuário não informado");
-
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
@@ -40,11 +37,9 @@ export class UserTableRepository {
   }
 
   async delete(userId: number): Promise<boolean> {
-    if (!userId) throw new Error("ID do usuário não informado");
-
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
-    
+
     user.destroy();
 
     return true;
