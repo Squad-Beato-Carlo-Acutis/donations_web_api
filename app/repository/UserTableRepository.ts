@@ -1,16 +1,17 @@
 import { encryptSha512 } from "../helpers/encryptSha512";
 import { TabUsers, TypeTabUsers } from "../models/TabUsers";
+import { TypeLoginToken } from "../types/typesCommon";
 
 export class UserTableRepository {
   async searchById(userId: number): Promise<TabUsers> {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
-    return user
+    return user;
   }
 
   async searchAll(): Promise<Array<TabUsers>> {
     return await TabUsers.findAll({
-      attributes: ['id', 'email', 'username']
+      attributes: ["id", "email", "username"],
     });
   }
 
@@ -43,5 +44,26 @@ export class UserTableRepository {
     user.destroy();
 
     return true;
+  }
+
+  async login(
+    email: string,
+    pws: string
+  ): Promise<{ userFound: boolean; userId?: number }> {
+    const encryptedPassword = encryptSha512(pws);
+
+    const user = await TabUsers.findOne({
+      where: {
+        email,
+        pws: encryptedPassword,
+      },
+    });
+
+    if (!user)
+      return {
+        userFound: false,
+      };
+
+    return { userFound: true, userId: user.toJSON().id };
   }
 }

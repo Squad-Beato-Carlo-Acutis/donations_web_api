@@ -1,14 +1,14 @@
 import crypto from "crypto";
 
 import jwt from "jsonwebtoken";
+import { ParamsTypeTokenEncripted } from "../types/typesCommon";
 
-export type ParamsTypeEncripted = {
-  userId: string;
-};
 
-export const encryptToken = async (params: ParamsTypeEncripted) => {
+
+export const encryptToken = async (params: ParamsTypeTokenEncripted) => {
   const prCryptoAlgorithm = process.env.ENV_ALGORITHM;
   const prCryptoSecretKey = process.env.ENV_SECRET_KEY;
+
   const iv = crypto.randomBytes(16);
 
   if (!prCryptoAlgorithm || !prCryptoSecretKey) {
@@ -31,11 +31,13 @@ export const encryptToken = async (params: ParamsTypeEncripted) => {
   };
 
   if (!params) throw new Error("Parâmetro vazio");
-  if (params.userId) {
+  if (!params.userId) {
     throw new Error("Uma das propriedades está vazia");
   }
 
-  const typeEncr = encrypt(JSON.stringify(params)); // encripta o user_id com crypto
+  const typeEncr = encrypt(JSON.stringify(params));
 
-  return jwt.sign(typeEncr, prCryptoSecretKey); // gera o JWT token
+  return jwt.sign(typeEncr, prCryptoSecretKey, {
+    expiresIn: 300 // expira em 5min
+  }); // gera o JWT token
 };

@@ -1,5 +1,6 @@
 import * as yup from "yup";
-import { pt } from 'yup-locale-pt';
+import { pt } from "yup-locale-pt";
+import { encryptToken } from "../../helpers/encrytToken";
 import { TypeTabUsers } from "../../models/TabUsers";
 import { UserTableRepository } from "../../repository/UserTableRepository";
 
@@ -85,7 +86,7 @@ export const UserTableController = {
       const userData = req.body;
       await UserTableController.fieldValidation(userData, "update");
       const userRepository = new UserTableRepository();
-      const user = (await userRepository.update(userId, userData)).toJSON()
+      const user = (await userRepository.update(userId, userData)).toJSON();
 
       res.status(200).json({
         id: user.id,
@@ -112,7 +113,7 @@ export const UserTableController = {
       if (!userId) throw new Error("ID do usuário não informado");
 
       const userRepository = new UserTableRepository();
-      const user = (await userRepository.searchById(userId)).toJSON()
+      const user = (await userRepository.searchById(userId)).toJSON();
       res.status(200).json({
         id: user.id,
         email: user.email,
@@ -123,7 +124,7 @@ export const UserTableController = {
         },
       });
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       res.status(400).json({
         errorMessage: "Erro ao procurar usuário pelo ID",
         error: error.message ? error.message : error,
@@ -142,6 +143,45 @@ export const UserTableController = {
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar deletar o usuário",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
+  },
+  login: async (req: any, res: any) => {
+    try {
+      const { email, pws } = req.body;
+
+      if (!email || !pws)
+        throw new Error("os campos email e pws são obrigátórios");
+
+      const userRepository = new UserTableRepository();
+      const { userFound, userId } = await userRepository.login(email, pws);
+
+      if (userFound) {
+        const token = await encryptToken({ userId: userId ?? 0 });
+
+        res.status(200).json({
+          auth: userFound,
+          token,
+          responseInfo: {
+            statusCode: 200,
+            msg: "Login realizado com sucesso",
+          },
+        });
+      } else {
+        res.status(200).json({
+          auth: userFound,
+          responseInfo: {
+            statusCode: 200,
+            msg: "Usuário não encontrado",
+          },
+        });
+      }
+    } catch (error: any) {
+      console.log(error);
+      res.status(400).json({
+        errorMessage: "Erro ao tentar se conectar",
         error: error.message ? error.message : error,
         statusCode: 400,
       });
