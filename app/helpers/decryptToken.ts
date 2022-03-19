@@ -3,7 +3,7 @@ import crypto from 'crypto'
 
 import jwt from 'jsonwebtoken'
 
-const decrypt = async (
+const decryptToken = async (
   token: string
 ) => {
   const prCryptoAlgorithm = process.env.ENV_ALGORITHM;
@@ -13,7 +13,7 @@ const decrypt = async (
     throw new Error("Estão faltando informações para a geração do token");
   }
 
-  const decryptToken = (hash: any) => {
+  const decrypt = (hash: any) => {
     const decipher = crypto.createDecipheriv(
       prCryptoAlgorithm,
       prCryptoSecretKey,
@@ -30,13 +30,10 @@ const decrypt = async (
 
   let decoded
 
-  try {
-    decoded = jwt.verify(token, prCryptoSecretKey, { ignoreExpiration: true })
-  } catch (err) {
-    throw new Error("'Problemas com o JWT'")
-  }
 
-  return decryptToken(decoded)
+  decoded = jwt.verify(token, prCryptoSecretKey)
+
+  return decrypt(decoded)
 }
 
-export { decrypt }
+export { decryptToken }
