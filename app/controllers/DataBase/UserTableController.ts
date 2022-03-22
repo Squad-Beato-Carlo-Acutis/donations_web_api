@@ -47,7 +47,7 @@ export const UserTableController = {
       res.status(200).json(await userRepository.searchAll());
     } catch (error: any) {
       res.status(400).json({
-        errorMessage: "Erro ao tentar buscar todosos usuários",
+        errorMessage: "Erro ao tentar buscar todos os usuários",
         error: error.message ? error.message : error,
         statusCode: 400,
       });
