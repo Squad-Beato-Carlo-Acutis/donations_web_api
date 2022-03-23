@@ -4,7 +4,11 @@ import { TypeLoginToken } from "../types/typesCommon";
 
 export class UserTableRepository {
   async searchById(userId: number): Promise<TabUsers> {
-    const user = await TabUsers.findByPk(userId);
+    const user = await TabUsers.findOne({
+      where: {
+        id: userId
+      }
+    });
     if (!user) throw new Error("Usuário não encontrado");
     return user;
   }

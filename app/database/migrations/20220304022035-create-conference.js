@@ -11,6 +11,7 @@ module.exports = {
       },
       tb_users_id: {
         type: Sequelize.INTEGER,
+        primaryKey: true,
         allowNull: false,
         references: { model: 'tb_users', key: 'id'},
         onUpdate: 'CASCADE',

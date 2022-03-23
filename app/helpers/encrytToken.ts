@@ -38,6 +38,6 @@ export const encryptToken = async (params: ParamsTypeTokenEncripted) => {
   const typeEncr = encrypt(JSON.stringify(params));
 
   return jwt.sign(typeEncr, prCryptoSecretKey, {
-    expiresIn: 300 // expira em 5min
+    expiresIn: process.env.ENV_TOKEN_EXPIRATION // tempo em segundos
   }); // gera o JWT token
 };
