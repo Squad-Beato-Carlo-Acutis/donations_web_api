@@ -19,6 +19,7 @@ export const userAuth = async (req: any, res: any, next: () => any) => {
   if(next) next()
 
   } catch(error){
+    console.log(error)
     return res.status(500).json({
       auth: false,
       responseInfo: {
