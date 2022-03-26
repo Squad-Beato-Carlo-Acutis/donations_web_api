@@ -1,5 +1,6 @@
 import express from "express";
 import { ConferencesTableController } from "./controllers/DataBase/ConferencesTableController";
+import { ProductsTableController } from "./controllers/DataBase/ProductsTableController";
 import { UserTableController } from "./controllers/DataBase/UserTableController";
 import { userAuth } from "./middlewares/userAuth";
 
@@ -17,12 +18,19 @@ routes.get('/api/v1/users/:userId', userAuth, UserTableController.getById)
 routes.patch('/api/v1/users/:userId', userAuth, UserTableController.update)
 routes.delete('/api/v1/users/:userId', userAuth, UserTableController.delete)
 
-// Routes Conference
+// Routes Conferences
 routes.get('/api/v1/users/:userId/conferences', userAuth, ConferencesTableController.getAll)
 routes.post('/api/v1/users/:userId/conferences', userAuth, ConferencesTableController.create)
 routes.get('/api/v1/users/:userId/conferences/:conferenceId', userAuth, ConferencesTableController.getById)
 routes.patch('/api/v1/users/:userId/conferences/:conferenceId', userAuth, ConferencesTableController.update)
 routes.delete('/api/v1/users/:userId/conferences/:conferenceId', userAuth, ConferencesTableController.delete)
+
+// Routes Products
+routes.get('/api/v1/users/:userId/products', userAuth, ProductsTableController.getAll)
+routes.post('/api/v1/users/:userId/products', userAuth, ProductsTableController.create)
+routes.get('/api/v1/users/:userId/products/:productId', userAuth, ProductsTableController.getById)
+routes.patch('/api/v1/users/:userId/products/:productId', userAuth, ProductsTableController.update)
+routes.delete('/api/v1/users/:userId/products/:productId', userAuth, ProductsTableController.delete)
 
 
 export { routes }

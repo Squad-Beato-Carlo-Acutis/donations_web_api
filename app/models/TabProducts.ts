@@ -35,7 +35,7 @@ export class TabProducts extends Model<TypeTabProducts> {
 
 
   static associate(models: any) {
-    this.belongsTo(models.TabUsers, { foreignKey: "tb_users_id", as: "users" });
+    this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
 
     this.hasOne(models.TabMeasures, {foreignKey: "tb_measures_id", as: "measures"})
     this.hasOne(models.TabCategories, {foreignKey: "tb_categories", as: "categories"})
