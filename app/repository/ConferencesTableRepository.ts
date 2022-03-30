@@ -9,7 +9,7 @@ export class ConferencesTableRepository {
     const conference = await TabConfereces.findOne({
       where: {
         id: conferenceId,
-        tb_users_id: userId,
+        tb_user_id: userId,
       }
     });
     if (!conference) throw new Error("Conferencia não encontrada");
@@ -19,7 +19,7 @@ export class ConferencesTableRepository {
   async searchAll(userId: number): Promise<Array<TabConfereces>> {
     return await TabConfereces.findAll({
       where: {
-        tb_users_id: userId,
+        tb_user_id: userId,
       },
     });
   }
@@ -32,7 +32,7 @@ export class ConferencesTableRepository {
     if (!user) throw new Error("Usuário não encontrado");
 
     const conferenceRegister = await TabConfereces.create({
-      tb_users_id: userId,
+      tb_user_id: userId,
       description: conference.description,
       link_avatar: conference.link_avatar,
       about: conference.about,
@@ -65,7 +65,7 @@ export class ConferencesTableRepository {
     const conference = await TabConfereces.findOne({
       where: {
         id: conferenceId,
-        tb_users_id: userId
+        tb_user_id: userId
       }
     });
     if (!conference) throw new Error("Conferencia não encontrada");
