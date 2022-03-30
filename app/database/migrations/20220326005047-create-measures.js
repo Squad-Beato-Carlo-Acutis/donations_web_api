@@ -9,7 +9,7 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
-      tb_users_id: {
+      tb_user_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         allowNull: false,

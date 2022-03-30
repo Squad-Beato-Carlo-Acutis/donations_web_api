@@ -23,7 +23,7 @@ export class TabUsers extends Model<TypeTabUsers> {
 
 
   static associate(models: any){
-    this.hasMany(models.TabConfereces, { foreignKey: 'tb_users_id', as: 'confereces'})
+    this.hasMany(models.TabConfereces, { foreignKey: 'tb_user_id', as: 'confereces'})
     this.hasMany(models.TabProducts, { foreignKey: 'tb_user_id', as: 'products'})
   }
 }

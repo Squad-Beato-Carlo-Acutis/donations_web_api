@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 
 export type TypeTabMeasures = {
   id?: number;
-  tb_users_id: number;
+  tb_user_id: number;
   description: string;
   abbreviation: string;
 };
@@ -17,7 +17,7 @@ export class TabMeasures extends Model<TypeTabMeasures> {
           autoIncrement: true,
           unique: "compositeIndex",
         },
-        tb_users_id: {
+        tb_user_id: {
           type: DataTypes.INTEGER,
           primaryKey: true,
           unique: "compositeIndex",

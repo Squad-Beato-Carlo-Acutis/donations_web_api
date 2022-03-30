@@ -1,16 +1,16 @@
+import { TabCategories } from "../models/TabCategories";
+import { TabMeasures } from "../models/TabMeasures";
 import { TabProducts, TypeTabProducts } from "../models/TabProducts";
 import { TabUsers } from "../models/TabUsers";
 
 export class ProductsTableRepository {
-  async searchById(
-    userId: number,
-    productId: number
-  ): Promise<TabProducts> {
+  async searchById(userId: number, productId: number): Promise<TabProducts> {
     const product = await TabProducts.findOne({
       where: {
         id: productId,
         tb_user_id: userId,
-      }
+      },
+      include: [{ association: "measure" }, { association: "category" }],
     });
     if (!product) throw new Error("Produto não encontrado");
     return product;
@@ -21,13 +21,11 @@ export class ProductsTableRepository {
       where: {
         tb_user_id: userId,
       },
+      include: [{ association: "measure" }, { association: "category" }],
     });
   }
 
-  async create(
-    userId: number,
-    product: TypeTabProducts
-  ): Promise<TabProducts> {
+  async create(userId: number, product: TypeTabProducts): Promise<TabProducts> {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
@@ -62,8 +60,8 @@ export class ProductsTableRepository {
     const product = await TabProducts.findOne({
       where: {
         id: productId,
-        tb_user_id: userId
-      }
+        tb_user_id: userId,
+      },
     });
     if (!product) throw new Error("Produto não encontrado");
 

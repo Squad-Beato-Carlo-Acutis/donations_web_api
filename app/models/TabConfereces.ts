@@ -2,7 +2,7 @@ import { Model, DataTypes } from "sequelize";
 
 export type TypeTabConfereces = {
   id?: number;
-  tb_users_id: number;
+  tb_user_id: number;
   description: string;
   link_avatar: string;
   about: string;
@@ -22,7 +22,7 @@ export class TabConfereces extends Model<TypeTabConfereces> {
           autoIncrement: true,
           unique: "compositeIndex",
         },
-        tb_users_id: {
+        tb_user_id: {
           type: DataTypes.INTEGER,
           primaryKey: true,
           unique: "compositeIndex",
@@ -43,6 +43,6 @@ export class TabConfereces extends Model<TypeTabConfereces> {
   }
 
   static associate(models: any) {
-    this.belongsTo(models.TabUsers, { foreignKey: "tb_users_id", as: "users" });
+    this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
   }
 }
