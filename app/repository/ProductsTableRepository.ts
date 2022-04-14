@@ -1,5 +1,3 @@
-import { TabCategories } from "../models/TabCategories";
-import { TabMeasures } from "../models/TabMeasures";
 import { TabProducts, TypeTabProducts } from "../models/TabProducts";
 import { TabUsers } from "../models/TabUsers";
 
