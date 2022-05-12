@@ -1,6 +1,7 @@
 import * as yup from "yup";
 import { pt } from "yup-locale-pt";
 import { TypeTabBasicBasket } from "../../models/TabBasicBasket";
+import { TypeProductsNeededRepository } from "../../models/TabProductsNeeded";
 import { BasicBasketTableRepository } from "../../repository/BasicBasketTableRepository";
 import { ProductsNeededRepository } from "../../repository/ProductsNeededRepository";
 
@@ -72,7 +73,19 @@ export const ProductsNeededController = {
       if (!userId) throw new Error("ID do usuário não informado");
       if (!conferenceId) throw new Error("Conferencia não informada");
       const productsNeededRepository = new ProductsNeededRepository();
-      res.status(200).json(await productsNeededRepository.searchAllProducts(userId, conferenceId));
+
+      const productsNeeded = await productsNeededRepository.searchAllProducts(userId, conferenceId)
+
+      productsNeeded.map<TypeProductsNeededRepository>((product) => {
+        return {
+          productId: product.tb_product_id,
+          productDescription: product.products.description,
+          productMeasurement: '',
+          quantity: product.products.quantity
+        }
+      })
+
+      res.status(200).json();
     } catch (error: any) {
       console.error(error)
       res.status(400).json({
