@@ -7,15 +7,13 @@ import { TabUsers } from "../models/TabUsers";
 
 export class ProductsNeededRepository {
   async searchAllProducts(userId: number, conferenceId: number): Promise<Array<any>> {
-    const productsNeeded = await TabProductsNeeded.findAll({
+    return TabProductsNeeded.findAll({
       where: {
         tb_user_id: userId,
         tb_conference_id: conferenceId
       },
-      include: [{ association: "products" }],
+      include: [{ association: "products", include: [{ association: "measure" }, { association: "category" }] }],
     });
-
-    return productsNeeded
   }
 
   async create(userId: number, basicBasket: TypeTabBasicBasket): Promise<TabBasicBasket> {

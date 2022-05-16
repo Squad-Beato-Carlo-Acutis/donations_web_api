@@ -6,7 +6,7 @@ import { BasicBasketTableRepository } from "../../repository/BasicBasketTableRep
 import { ProductsNeededRepository } from "../../repository/ProductsNeededRepository";
 
 // UserTableController
-export const ProductsNeededController = {
+export const ProductsNeededController = { 
   checkValidFieldsBasicBasket: async (
     basicBasket: TypeTabBasicBasket,
     typeValidation: "create" | "update" = "create"
@@ -74,18 +74,17 @@ export const ProductsNeededController = {
       if (!conferenceId) throw new Error("Conferencia não informada");
       const productsNeededRepository = new ProductsNeededRepository();
 
-      const productsNeeded = await productsNeededRepository.searchAllProducts(userId, conferenceId)
+      const productsNeeded = await productsNeededRepository.searchAllProducts(userId, conferenceId);
 
-      productsNeeded.map<TypeProductsNeededRepository>((product) => {
+
+      res.status(200).json(productsNeeded.map<TypeProductsNeededRepository>((product) => {
         return {
           productId: product.tb_product_id,
           productDescription: product.products.description,
-          productMeasurement: '',
-          quantity: product.products.quantity
+          productMeasurement: product.products.measure.abbreviation,
+          quantity: product.quantity
         }
-      })
-
-      res.status(200).json();
+      }));
     } catch (error: any) {
       console.error(error)
       res.status(400).json({
