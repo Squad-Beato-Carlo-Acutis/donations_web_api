@@ -5,6 +5,7 @@ import { TabConfereces } from "../models/TabConfereces";
 import { TabMeasures } from "../models/TabMeasures";
 import { TabProductBasicBasket } from "../models/TabProductBasicBasket";
 import { TabProducts } from "../models/TabProducts";
+import { TabProductsNeeded } from "../models/TabProductsNeeded";
 import { TabUsers } from "../models/TabUsers";
 const dbConfig = require("../config/database")
 
@@ -17,8 +18,10 @@ TabCategories.initialize(conection)
 TabProducts.initialize(conection)
 TabBasicBasket.initialize(conection)
 TabProductBasicBasket.initialize(conection)
+TabProductsNeeded.initialize(conection)
 
 TabUsers.associate(conection.models)
 TabConfereces.associate(conection.models)
 TabProducts.associate(conection.models)
 TabBasicBasket.associate(conection.models)
+TabProductsNeeded.associate(conection.models)

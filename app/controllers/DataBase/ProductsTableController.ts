@@ -135,7 +135,7 @@ export const ProductsTableController = {
         },
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       res.status(400).json({
         errorMessage: "Erro ao buscar o produto pelo ID",
         error: error.message ? error.message : error,

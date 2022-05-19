@@ -1,6 +1,7 @@
 import express from "express";
 import { BasicBasketTableController } from "./controllers/DataBase/BasicBasketTableController";
 import { ConferencesTableController } from "./controllers/DataBase/ConferencesTableController";
+import { ProductsNeededController } from "./controllers/DataBase/ProductsNeededController";
 import { ProductsTableController } from "./controllers/DataBase/ProductsTableController";
 import { UserTableController } from "./controllers/DataBase/UserTableController";
 import { userAuth } from "./middlewares/userAuth";
@@ -41,6 +42,11 @@ routes.patch('/api/v1/users/:userId/basicbasket/:basicBasketId', userAuth, Basic
 routes.delete('/api/v1/users/:userId/basicbasket/:basicBasketId', userAuth, BasicBasketTableController.delete)
 routes.post('/api/v1/users/:userId/basicbasket/:basicBasketId/product', userAuth, BasicBasketTableController.insertProduct)
 routes.delete('/api/v1/users/:userId/basicbasket/:basicBasketId/product/:productId', userAuth, BasicBasketTableController.deleteProduct)
+
+// Routes Products Needed
+routes.get('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.getAll)
+routes.post('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.createOrUpdate)
+routes.delete('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.delete)
 
 
 export { routes }
