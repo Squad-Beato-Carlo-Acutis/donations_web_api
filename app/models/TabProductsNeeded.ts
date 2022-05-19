@@ -9,8 +9,8 @@ export type TypeTabProductsNeeded = {
 
 export type TypeProductsNeededRepository = {
   productId: number;
-  productDescription: string;
-  productMeasurement: string;
+  productDescription?: string;
+  productMeasurement?: string;
   quantity: number;
 }
 

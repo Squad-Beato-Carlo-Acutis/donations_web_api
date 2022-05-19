@@ -166,7 +166,7 @@ export const BasicBasketTableController = {
         },
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       res.status(400).json({
         errorMessage: "Erro ao buscar a cesta básica pelo ID",
         error: error.message ? error.message : error,

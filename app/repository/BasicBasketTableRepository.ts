@@ -16,8 +16,7 @@ export class BasicBasketTableRepository {
   }
 
   async searchAll(userId: number): Promise<Array<TabBasicBasket>> {
-    console.log("userId => ", userId)
-    return await TabBasicBasket.findAll({
+    return TabBasicBasket.findAll({
       where: {
         tb_user_id: userId,
       },
@@ -29,13 +28,11 @@ export class BasicBasketTableRepository {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
-    const basicBasketRegister = await TabBasicBasket.create({
+    return TabBasicBasket.create({
       tb_user_id: userId,
       description: basicBasket.description,
       ind_active: basicBasket.ind_active,
     });
-
-    return basicBasketRegister;
   }
 
   async update(
@@ -74,7 +71,7 @@ export class BasicBasketTableRepository {
     const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
     if (!basicBasket) throw new Error("Cesta Básica não encontrada");
 
-    const productBasicBasketRegister = await TabProductBasicBasket.create({
+    return TabProductBasicBasket.create({
       tb_user_id: userId,
       tb_basic_basket_id: basicBasketId,
       tb_product_id: productBasicBasket.productId,
@@ -83,8 +80,6 @@ export class BasicBasketTableRepository {
       ind_essential: productBasicBasket.ind_essential,
       ind_active: productBasicBasket.ind_active,
     });
-
-    return productBasicBasketRegister;
   }
 
   async deleteProduct(userId: number, basicBasketId: number, productId: number): Promise<boolean> {

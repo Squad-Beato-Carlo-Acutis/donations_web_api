@@ -124,7 +124,7 @@ export const UserTableController = {
         },
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       res.status(400).json({
         errorMessage: "Erro ao procurar usuário pelo ID",
         error: error.message ? error.message : error,
@@ -179,7 +179,7 @@ export const UserTableController = {
         });
       }
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       res.status(400).json({
         errorMessage: "Erro ao tentar se conectar",
         error: error.message ? error.message : error,

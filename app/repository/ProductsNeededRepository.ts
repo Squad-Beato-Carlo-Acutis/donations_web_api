@@ -1,9 +1,6 @@
-import { TabBasicBasket, TypeTabBasicBasket } from "../models/TabBasicBasket";
-import { TabProductBasicBasket, TypeInsertByBasicBasket } from "../models/TabProductBasicBasket";
-import { TabProductsNeeded, TypeProductsNeededRepository } from "../models/TabProductsNeeded";
+import { TabConfereces } from "../models/TabConfereces";
+import { TabProductsNeeded, TypeProductsNeededRepository, TypeTabProductsNeeded } from "../models/TabProductsNeeded";
 import { TabUsers } from "../models/TabUsers";
-
-
 
 export class ProductsNeededRepository {
   async searchAllProducts(userId: number, conferenceId: number): Promise<Array<any>> {
@@ -16,82 +13,51 @@ export class ProductsNeededRepository {
     });
   }
 
-  async create(userId: number, basicBasket: TypeTabBasicBasket): Promise<TabBasicBasket> {
-    const user = await TabUsers.findByPk(userId);
-    if (!user) throw new Error("Usuário não encontrado");
+  async createOrUpdate(userId: number, conferenceId: number, data: Array<TypeProductsNeededRepository>): Promise<TypeTabProductsNeeded[]> {
 
-    const basicBasketRegister = await TabBasicBasket.create({
-      tb_user_id: userId,
-      description: basicBasket.description,
-      ind_active: basicBasket.ind_active,
-    });
+    if (!(await TabUsers.findByPk(userId))) throw new Error("Usuário não encontrado");
 
-    return basicBasketRegister;
-  }
+    if (!(await TabConfereces.findByPk(conferenceId)))
+      throw new Error("Usuário não encontrado");
 
-  async update(
-    userId: number,
-    basicBasketId: number,
-    data: TypeTabBasicBasket
-  ): Promise<TabBasicBasket> {
-    const user = await TabUsers.findByPk(userId);
-    if (!user) throw new Error("Usuário não encontrado");
-
-    const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
-    if (!basicBasket) throw new Error("Cesta Básica não encontrada");
-
-    await basicBasket.update(data);
-
-    return basicBasket;
-  }
-
-  async delete(userId: number, basicBasketId: number): Promise<boolean> {
-    const basicBasket = await TabBasicBasket.findOne({
-      where: {
-        id: basicBasketId,
+    return Promise.all(data.map(async (product) => {
+      const dataInsert: TypeTabProductsNeeded = {
         tb_user_id: userId,
-      },
-    });
-    if (!basicBasket) throw new Error("Cesta Básica não encontrada");
+        tb_conference_id: conferenceId,
+        tb_product_id: product.productId,
+        quantity: product.quantity,
+      }
 
-    basicBasket.destroy();
+      const productNeeded = await TabProductsNeeded.findOne({
+        where: {
+          tb_user_id: userId,
+          tb_conference_id: conferenceId,
+          tb_product_id: product.productId
+        }
+      });
 
-    return true;
+      if (productNeeded) {
+        await productNeeded.update(dataInsert);
+      } else {
+        await TabProductsNeeded.create(dataInsert)
+      }
+
+      return dataInsert
+    }))
   }
 
-  // Products
-
-  async insertProduct(userId: number, basicBasketId: number, productBasicBasket: TypeInsertByBasicBasket): Promise<TabProductBasicBasket> {
-    const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
-    if (!basicBasket) throw new Error("Cesta Básica não encontrada");
-
-    const productBasicBasketRegister = await TabProductBasicBasket.create({
-      tb_user_id: userId,
-      tb_basic_basket_id: basicBasketId,
-      tb_product_id: productBasicBasket.productId,
-      quantity: productBasicBasket.quantity,
-      priority: productBasicBasket.priority,
-      ind_essential: productBasicBasket.ind_essential,
-      ind_active: productBasicBasket.ind_active,
-    });
-
-    return productBasicBasketRegister;
-  }
-
-  async deleteProduct(userId: number, basicBasketId: number, productId: number): Promise<boolean> {
-    const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
-    if (!basicBasket) throw new Error("Cesta Básica não encontrada");
-
-    const productBasicBasketRegister = await TabProductBasicBasket.findOne({
-      where: {
-        tb_basic_basket_id: basicBasketId,
-        tb_user_id: userId,
-        tb_product_id: productId
-      },
-    });
-    if (!productBasicBasketRegister) throw new Error("Produto da cesta básica não encontrado");
-
-    productBasicBasketRegister.destroy();
+  async delete(userId: number, conferenceId: number, productId: Array<{
+    productId: number
+  }>): Promise<boolean> {
+    productId.forEach(async (product) => {
+      await TabProductsNeeded.destroy({
+        where: {
+          tb_user_id: userId,
+          tb_conference_id: conferenceId,
+          tb_product_id: product.productId
+        },
+      });
+    })
 
     return true;
   }

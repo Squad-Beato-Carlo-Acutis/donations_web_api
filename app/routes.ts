@@ -45,6 +45,8 @@ routes.delete('/api/v1/users/:userId/basicbasket/:basicBasketId/product/:product
 
 // Routes Products Needed
 routes.get('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.getAll)
+routes.post('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.createOrUpdate)
+routes.delete('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.delete)
 
 
 export { routes }
