@@ -27,7 +27,6 @@ module.exports = {
       },
       movement_date: {
         type: Sequelize.DATE,
-        primaryKey: true,
         allowNull: false,
         defaultValue: Sequelize.NOW
       },

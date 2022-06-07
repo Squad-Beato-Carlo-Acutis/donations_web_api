@@ -2,7 +2,7 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tb_item_stock_movement', {
+    await queryInterface.createTable('tb_product_stock_movement', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -23,12 +23,12 @@ module.exports = {
         allowNull: false,
         references: { model: 'tb_products', key: 'id'},
       },
-      quantity: {
-        type: Sequelize.INTEGER,
+      movement_value: {
+        type: Sequelize.DOUBLE,
         allowNull: false
       },
       type_movement: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(1),
         allowNull: false
       },
       created_at: {
@@ -43,6 +43,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tb_item_stock_movement');
+    await queryInterface.dropTable('tb_product_stock_movement');
   }
 };

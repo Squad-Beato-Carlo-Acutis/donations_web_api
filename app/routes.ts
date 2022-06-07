@@ -3,6 +3,7 @@ import { BasicBasketTableController } from "./controllers/DataBase/BasicBasketTa
 import { ConferencesTableController } from "./controllers/DataBase/ConferencesTableController";
 import { ProductsNeededController } from "./controllers/DataBase/ProductsNeededController";
 import { ProductsTableController } from "./controllers/DataBase/ProductsTableController";
+import { StockMovementController } from "./controllers/DataBase/StockMovementController";
 import { UserTableController } from "./controllers/DataBase/UserTableController";
 import { userAuth } from "./middlewares/userAuth";
 
@@ -47,6 +48,14 @@ routes.delete('/api/v1/users/:userId/basicbasket/:basicBasketId/product/:product
 routes.get('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.getAll)
 routes.post('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.createOrUpdate)
 routes.delete('/api/v1/users/:userId/conference/:conferenceId/productsneeded', userAuth, ProductsNeededController.delete)
+
+// Routes Stock
+routes.get('/api/v1/users/:userId/conference/:conferenceId/stockmovement', userAuth, StockMovementController.getAll)
+routes.get('/api/v1/users/:userId/conference/:conferenceId/stockmovement/:stockMovementId', userAuth, StockMovementController.getById)
+routes.post('/api/v1/users/:userId/conference/:conferenceId/stockmovement', userAuth, StockMovementController.generateStockMovement)
+routes.delete('/api/v1/users/:userId/conference/:conferenceId/stockmovement/:stockMovementId', userAuth, StockMovementController.inactivateStockMovement)
+routes.get('/api/v1/users/:userId/conference/:conferenceId/currentstock', userAuth, StockMovementController.getCurrentStock)
+routes.get('/api/v1/users/:userId/conference/:conferenceId/neededproductsstock', userAuth, StockMovementController.getNeededProductsStock)
 
 
 export { routes }

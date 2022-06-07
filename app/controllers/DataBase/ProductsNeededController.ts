@@ -7,30 +7,30 @@ import { ProductsNeededRepository } from "../../repository/ProductsNeededReposit
 export const ProductsNeededController = {
   checkValidFieldsproductNeeded: async (
     productNeeded: Array<TypeProductsNeededRepository>,
-    type: 'createOrUpdate' | 'delete'
+    type: "createOrUpdate" | "delete"
   ): Promise<boolean> => {
     yup.setLocale(pt);
-    let schema = type === 'createOrUpdate' ?
-      yup.object().shape({
-        productId: yup.number().required(),
-        quantity: yup.number().required(),
-      })
-      :
-      yup.object().shape({
-        productId: yup.number().required(),
-      })
+    let schema =
+      type === "createOrUpdate"
+        ? yup.object().shape({
+            productId: yup.number().required(),
+            quantity: yup.number().required(),
+          })
+        : yup.object().shape({
+            productId: yup.number().required(),
+          });
 
     let result: any;
 
     try {
-
-      if (!Array.isArray(productNeeded)) throw new Error("Os produtos devem ser enviados dentro de um Array!");
+      if (!Array.isArray(productNeeded))
+        throw new Error("Os produtos devem ser enviados dentro de um Array!");
 
       if (!productNeeded.length) throw new Error("Nenhum produto foi enviado!");
 
       productNeeded.forEach(async (product) => {
         result = await schema.validate(product);
-      })
+      });
     } catch (error) {
       result = error;
     }
@@ -50,19 +50,23 @@ export const ProductsNeededController = {
       if (!conferenceId) throw new Error("Conferencia não informada");
       const productsNeededRepository = new ProductsNeededRepository();
 
-      const productsNeeded = await productsNeededRepository.searchAllProducts(userId, conferenceId);
+      const productsNeeded = await productsNeededRepository.searchAllProducts(
+        userId,
+        conferenceId
+      );
 
-
-      res.status(200).json(productsNeeded.map<TypeProductsNeededRepository>((product) => {
-        return {
-          productId: product.tb_product_id,
-          productDescription: product.products.description,
-          productMeasurement: product.products.measure.abbreviation,
-          quantity: product.quantity
-        }
-      }));
+      res.status(200).json(
+        productsNeeded.map<TypeProductsNeededRepository>((product) => {
+          return {
+            productId: product.tb_product_id,
+            productDescription: product.products.description,
+            productMeasurement: product.products.measure.abbreviation,
+            quantity: product.quantity,
+          };
+        })
+      );
     } catch (error: any) {
-      console.error(error)
+      console.error(error);
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todas as cestas basicas",
         error: error.message ? error.message : error,
@@ -81,9 +85,14 @@ export const ProductsNeededController = {
       const productNeededRepository = new ProductsNeededRepository();
       const productNeededData = req.body;
       await ProductsNeededController.checkValidFieldsproductNeeded(
-        productNeededData, 'createOrUpdate'
+        productNeededData,
+        "createOrUpdate"
       );
-      const productNeeded = await productNeededRepository.createOrUpdate(userId, conferenceId, productNeededData);
+      const productNeeded = await productNeededRepository.createOrUpdate(
+        userId,
+        conferenceId,
+        productNeededData
+      );
 
       res.status(200).json({
         updatedProducts: productNeeded,
@@ -94,12 +103,13 @@ export const ProductsNeededController = {
       });
     } catch (error: any) {
       res.status(400).json({
-        errorMessage: "Erro na inserção ou atualização dos produtos da conferencia",
+        errorMessage:
+          "Erro na inserção ou atualização dos produtos da conferencia",
         error: error.message ? error.message : error,
         statusCode: 400,
       });
 
-      console.error(error)
+      console.error(error);
     }
   },
 
@@ -109,9 +119,10 @@ export const ProductsNeededController = {
       if (!userId) throw new Error("ID do usuário não informado");
       if (!conferenceId) throw new Error("ID da conferencia não informada");
 
-      const products = req.body
+      const products = req.body;
       await ProductsNeededController.checkValidFieldsproductNeeded(
-        products, 'delete'
+        products,
+        "delete"
       );
 
       const productNeededRepository = new ProductsNeededRepository();
