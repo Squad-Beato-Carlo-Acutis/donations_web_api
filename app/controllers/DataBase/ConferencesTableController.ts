@@ -141,7 +141,7 @@ export const ConferencesTableController = {
         },
       });
     } catch (error: any) {
-      console.log(error);
+      console.error(error);
       res.status(400).json({
         errorMessage: "Erro ao procurar conferencia pelo ID",
         error: error.message ? error.message : error,
