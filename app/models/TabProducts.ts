@@ -1,18 +1,15 @@
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model, ModelStatic } from "sequelize";
 
-export type TypeTabConfereces = {
+export type TypeTabProducts = {
   id?: number;
   tb_user_id: number;
   description: string;
-  link_avatar: string;
-  about: string;
-  title_address: string;
-  address: string;
-  opening_hours: string;
+  tb_measure_id: number;
+  tb_category_id: number;
   ind_active: boolean;
 };
 
-export class TabConfereces extends Model<TypeTabConfereces> {
+export class TabProducts extends Model<TypeTabProducts> {
   static initialize(sequelize: any) {
     this.init(
       {
@@ -28,21 +25,29 @@ export class TabConfereces extends Model<TypeTabConfereces> {
           unique: "compositeIndex",
         },
         description: DataTypes.STRING,
-        link_avatar: DataTypes.STRING,
-        about: DataTypes.STRING,
-        title_address: DataTypes.STRING,
-        address: DataTypes.STRING,
-        opening_hours: DataTypes.STRING,
+        tb_measure_id: DataTypes.NUMBER,
+        tb_category_id: DataTypes.NUMBER,
         ind_active: DataTypes.BOOLEAN,
       },
       {
         sequelize,
-        tableName: "tb_conferences",
+        tableName: "tb_products",
       }
     );
   }
 
   static associate(models: any) {
     this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
+
+    this.hasOne(models.TabMeasures, {
+      sourceKey: "tb_measure_id",
+      foreignKey: "id",
+      as: "measure",
+    });
+    this.hasOne(models.TabCategories, {
+      sourceKey: "tb_category_id",
+      foreignKey: "id",
+      as: "category",
+    });
   }
 }

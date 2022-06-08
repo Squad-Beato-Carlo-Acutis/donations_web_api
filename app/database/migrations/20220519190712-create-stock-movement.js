@@ -2,7 +2,7 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tb_conferences', {
+    await queryInterface.createTable('tb_stock_movement', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -17,27 +17,20 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      description: {
-        type: Sequelize.STRING,
-        allowNull: false
+      tb_conference_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        references: { model: 'tb_conferences', key: 'id'},
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
-      link_avatar: {
-        type: Sequelize.STRING,
-        allowNull: true
+      movement_date: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW
       },
-      about: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      title_address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      opening_hours: {
+      movement_description: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -57,6 +50,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tb_conferences');
+    await queryInterface.dropTable('tb_stock_movement');
   }
 };

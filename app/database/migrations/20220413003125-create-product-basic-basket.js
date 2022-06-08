@@ -2,7 +2,7 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tb_conferences', {
+    await queryInterface.createTable('tb_product_basic_basket', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -17,29 +17,33 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      description: {
-        type: Sequelize.STRING,
+      tb_basic_basket_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        references: { model: 'tb_basic_basket', key: 'id'},
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
+      tb_product_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        references: { model: 'tb_products', key: 'id'},
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
+      quantity: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
-      link_avatar: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      about: {
-        type: Sequelize.STRING,
+      priority: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
-      title_address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      opening_hours: {
-        type: Sequelize.STRING,
-        allowNull: false
+      ind_essential: {
+        type: Sequelize.TINYINT,
+        defaultValue: false
       },
       ind_active: {
         type: Sequelize.TINYINT,
@@ -57,6 +61,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tb_conferences');
+    await queryInterface.dropTable('tb_product_basic_basket');
   }
 };

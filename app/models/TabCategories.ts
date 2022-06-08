@@ -1,18 +1,14 @@
 import { Model, DataTypes } from "sequelize";
 
-export type TypeTabConfereces = {
+export type TypeTabCategories = {
   id?: number;
   tb_user_id: number;
   description: string;
-  link_avatar: string;
-  about: string;
-  title_address: string;
-  address: string;
-  opening_hours: string;
-  ind_active: boolean;
+  posit_level: number;
+  ind_active: boolean
 };
 
-export class TabConfereces extends Model<TypeTabConfereces> {
+export class TabCategories extends Model<TypeTabCategories> {
   static initialize(sequelize: any) {
     this.init(
       {
@@ -28,21 +24,13 @@ export class TabConfereces extends Model<TypeTabConfereces> {
           unique: "compositeIndex",
         },
         description: DataTypes.STRING,
-        link_avatar: DataTypes.STRING,
-        about: DataTypes.STRING,
-        title_address: DataTypes.STRING,
-        address: DataTypes.STRING,
-        opening_hours: DataTypes.STRING,
+        posit_level: DataTypes.NUMBER,
         ind_active: DataTypes.BOOLEAN,
       },
       {
         sequelize,
-        tableName: "tb_conferences",
+        tableName: "tb_categories",
       }
     );
-  }
-
-  static associate(models: any) {
-    this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
   }
 }

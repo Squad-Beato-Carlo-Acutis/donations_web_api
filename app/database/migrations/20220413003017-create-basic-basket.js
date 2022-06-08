@@ -2,7 +2,7 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tb_conferences', {
+    await queryInterface.createTable('tb_basic_basket', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -18,26 +18,6 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       description: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      link_avatar: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      about: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      title_address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      opening_hours: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -57,6 +37,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tb_conferences');
+    await queryInterface.dropTable('tb_basic_basket');
   }
 };

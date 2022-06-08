@@ -1,18 +1,13 @@
-import { Model, DataTypes } from "sequelize";
+import { DataTypes, Model, ModelStatic } from "sequelize";
 
-export type TypeTabConfereces = {
+export type TypeTabBasicBasket = {
   id?: number;
   tb_user_id: number;
   description: string;
-  link_avatar: string;
-  about: string;
-  title_address: string;
-  address: string;
-  opening_hours: string;
   ind_active: boolean;
 };
 
-export class TabConfereces extends Model<TypeTabConfereces> {
+export class TabBasicBasket extends Model<TypeTabBasicBasket> {
   static initialize(sequelize: any) {
     this.init(
       {
@@ -28,21 +23,22 @@ export class TabConfereces extends Model<TypeTabConfereces> {
           unique: "compositeIndex",
         },
         description: DataTypes.STRING,
-        link_avatar: DataTypes.STRING,
-        about: DataTypes.STRING,
-        title_address: DataTypes.STRING,
-        address: DataTypes.STRING,
-        opening_hours: DataTypes.STRING,
         ind_active: DataTypes.BOOLEAN,
       },
       {
         sequelize,
-        tableName: "tb_conferences",
+        tableName: "tb_basic_basket",
       }
     );
   }
 
   static associate(models: any) {
     this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
+
+    this.hasMany(models.TabProductBasicBasket, {
+      sourceKey: "id",
+      foreignKey: "tb_basic_basket_id",
+      as: "products",
+    });
   }
 }

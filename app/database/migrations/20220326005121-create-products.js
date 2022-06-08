@@ -2,7 +2,7 @@
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('tb_conferences', {
+    await queryInterface.createTable('tb_products', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -21,24 +21,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      link_avatar: {
-        type: Sequelize.STRING,
+      tb_measure_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'tb_measures', key: 'id'},
         allowNull: true
       },
-      about: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      title_address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      address: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      opening_hours: {
-        type: Sequelize.STRING,
+      tb_category_id: {
+        type: Sequelize.INTEGER,
+        references: { model: 'tb_categories', key: 'id'},
         allowNull: false
       },
       ind_active: {
@@ -57,6 +47,6 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('tb_conferences');
+    await queryInterface.dropTable('tb_products');
   }
 };
