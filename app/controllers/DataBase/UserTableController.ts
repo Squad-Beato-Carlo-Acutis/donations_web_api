@@ -148,6 +148,7 @@ export const UserTableController = {
       });
     }
   },
+
   login: async (req: any, res: any) => {
     try {
       const { email, pws } = req.body;
@@ -156,7 +157,7 @@ export const UserTableController = {
         throw new Error("os campos email e pws são obrigátórios");
 
       const userRepository = new UserTableRepository();
-      const { userFound, userId } = await userRepository.login(email, pws);
+      const { userFound, userId, userName } = await userRepository.login(email, pws);
 
       if (userFound) {
         const token = await encryptToken({ userId: userId ?? 0 });
@@ -168,6 +169,10 @@ export const UserTableController = {
             statusCode: 200,
             msg: "Login realizado com sucesso",
           },
+          userData: {
+            userId,
+            userName
+          }
         });
       } else {
         res.status(200).json({

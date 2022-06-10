@@ -53,7 +53,7 @@ export class UserTableRepository {
   async login(
     email: string,
     pws: string
-  ): Promise<{ userFound: boolean; userId?: number }> {
+  ): Promise<{ userFound: boolean; userId?: number; userName?: string }> {
     const encryptedPassword = encryptSha512(pws);
 
     const user = await TabUsers.findOne({
@@ -68,6 +68,8 @@ export class UserTableRepository {
         userFound: false,
       };
 
-    return { userFound: true, userId: user.toJSON().id };
+    const userData = user.toJSON()
+
+    return { userFound: true, userId: userData.id, userName: userData.username };
   }
 }
