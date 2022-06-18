@@ -1,20 +1,19 @@
 import { encryptSha512 } from "../helpers/encryptSha512";
 import { TabUsers, TypeTabUsers } from "../models/TabUsers";
-import { TypeLoginToken } from "../types/typesCommon";
 
 export class UserTableRepository {
   async searchById(userId: number): Promise<TabUsers> {
     const user = await TabUsers.findOne({
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
     if (!user) throw new Error("Usuário não encontrado");
     return user;
   }
 
   async searchAll(): Promise<Array<TabUsers>> {
-    return await TabUsers.findAll({
+    return TabUsers.findAll({
       attributes: ["id", "email", "username"],
     });
   }
@@ -22,14 +21,18 @@ export class UserTableRepository {
   async create(user: TypeTabUsers): Promise<TabUsers> {
     const encryptedPassword = encryptSha512(user.pws);
 
-    const userRegister = await TabUsers.create({
+    const userCreate: TypeTabUsers = {
       email: user.email,
       pws: encryptedPassword,
       username: user.username,
       ind_active: true,
-    });
+    };
 
-    return userRegister;
+    if (user?.type_user) {
+      userCreate.type_user = user.type_user;
+    }
+
+    return TabUsers.create(userCreate);
   }
 
   async update(userId: number, data: TypeTabUsers): Promise<TabUsers> {
@@ -53,7 +56,12 @@ export class UserTableRepository {
   async login(
     email: string,
     pws: string
-  ): Promise<{ userFound: boolean; userId?: number; userName?: string }> {
+  ): Promise<{
+    userFound: boolean;
+    userId?: number;
+    userName?: string;
+    typeUser?: string;
+  }> {
     const encryptedPassword = encryptSha512(pws);
 
     const user = await TabUsers.findOne({
@@ -68,8 +76,13 @@ export class UserTableRepository {
         userFound: false,
       };
 
-    const userData = user.toJSON()
+    const userData = user.toJSON();
 
-    return { userFound: true, userId: userData.id, userName: userData.username };
+    return {
+      userFound: true,
+      userId: userData.id,
+      userName: userData.username,
+      typeUser: userData.type_user,
+    };
   }
 }
