@@ -7,6 +7,7 @@ export type TypeTabProducts = {
   tb_measure_id: number;
   tb_category_id: number;
   ind_active: boolean;
+  link_image?: string;
 };
 
 export class TabProducts extends Model<TypeTabProducts> {
@@ -28,6 +29,7 @@ export class TabProducts extends Model<TypeTabProducts> {
         tb_measure_id: DataTypes.NUMBER,
         tb_category_id: DataTypes.NUMBER,
         ind_active: DataTypes.BOOLEAN,
+        link_image: DataTypes.STRING(100),
       },
       {
         sequelize,

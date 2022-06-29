@@ -15,7 +15,7 @@ export class ProductsTableRepository {
   }
 
   async searchAll(userId: number): Promise<Array<TabProducts>> {
-    return await TabProducts.findAll({
+    return TabProducts.findAll({
       where: {
         tb_user_id: userId,
       },
@@ -27,15 +27,14 @@ export class ProductsTableRepository {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
-    const productRegister = await TabProducts.create({
+    return TabProducts.create({
       tb_user_id: userId,
       description: product.description,
       tb_measure_id: product.tb_measure_id,
       tb_category_id: product.tb_category_id,
       ind_active: product.ind_active,
+      link_image: product.link_image,
     });
-
-    return productRegister;
   }
 
   async update(

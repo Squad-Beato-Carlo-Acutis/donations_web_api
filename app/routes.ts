@@ -76,6 +76,12 @@ routes.delete(
   userAuth,
   ProductsTableController.delete
 );
+routes.post(
+  "/api/v1/products/:productId/uploadimg",
+  userAuth,
+  customMulter.single("product_img"),
+  ProductsTableController.uploadImage
+);
 
 // Routes BasicBasket
 routes.get("/api/v1/basicbasket", userAuth, BasicBasketTableController.getAll);

@@ -1,12 +1,14 @@
 import fs from "fs";
 import sharp from "sharp";
 
-export const deleteImage = (path: string) => {
+export const deleteImage = (path?: string) => {
   if(!path) return
+
+  const completePath = `${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`
   
-  fs.access(path, (err) => {
+  fs.access(completePath, (err) => {
     if (!err) {
-      fs.unlink(path, (err) => {
+      fs.unlink(completePath, (err) => {
         if (err) console.error(err);
       });
     }
@@ -48,8 +50,10 @@ export const compressImage = (file: any) => {
           }
         });
 
+        const path = `${process.env.ENV_IMAGE_DIRECTORY?.replace('/', '\\')}\\`
+
         // Se o código chegou até aqui, deu tudo certo, então vamos retornar o novo caminho
-        return newPath;
+        return newPath.replace(path, '');
       })
   );
 };

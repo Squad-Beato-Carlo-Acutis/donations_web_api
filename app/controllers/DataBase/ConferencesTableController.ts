@@ -171,13 +171,14 @@ export const ConferencesTableController = {
       });
     }
   },
+
   uploadImage: async (req: any, res: any) => {
     try {
       const { userId, conferenceId } = req.params;
 
       if (!userId) throw new Error("ID do usuário não informado");
       if (!conferenceId) throw new Error("ID da conferencia não informado");
-      if (!req.file) throw new Error("Avatar da conferencia inválido");
+      if (!req.file) throw new Error("Imagem da conferencia inválida");
       const pathImage = await compressImage(req.file);
 
       const conferenceRepository = new ConferencesTableRepository();
@@ -191,10 +192,10 @@ export const ConferencesTableController = {
       ).toJSON();
 
       res.status(200).json({
-        ...conference,
+        link_avatar: conference.link_avatar,
         responseInfo: {
           statusCode: 200,
-          msg: "Upload da iamgem realizado com sucesso",
+          msg: "Upload da imagem realizado com sucesso",
         },
       });
     } catch (error: any) {

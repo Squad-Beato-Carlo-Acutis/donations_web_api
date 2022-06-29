@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { pt } from "yup-locale-pt";
+import { compressImage, deleteImage } from "../../helpers/helperImage";
 import { TypeTabProducts } from "../../models/TabProducts";
 import { ProductsTableRepository } from "../../repository/ProductsTableRepository";
 
@@ -62,10 +63,7 @@ export const ProductsTableController = {
       if (!userId) throw new Error("ID do usuário não informado");
       const productRepository = new ProductsTableRepository();
       const productData = req.body;
-      await ProductsTableController.fieldValidation(
-        productData,
-        "create"
-      );
+      await ProductsTableController.fieldValidation(productData, "create");
       const product = (
         await productRepository.create(userId, productData)
       ).toJSON();
@@ -94,11 +92,10 @@ export const ProductsTableController = {
       if (!productId) throw new Error("ID do produto não informado");
 
       const productData = req.body;
-      await ProductsTableController.fieldValidation(
-        productData,
-        "update"
-      );
+
+      await ProductsTableController.fieldValidation(productData, "update");
       const productRepository = new ProductsTableRepository();
+
       const product = (
         await productRepository.update(userId, productId, productData)
       ).toJSON();
@@ -121,12 +118,14 @@ export const ProductsTableController = {
 
   getById: async (req: any, res: any) => {
     try {
-      const { userId, productId} = req.params;
+      const { userId, productId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       if (!productId) throw new Error("ID do produto não informado");
 
       const productRepository = new ProductsTableRepository();
-      const product = (await productRepository.searchById(userId, productId)).toJSON();
+      const product = (
+        await productRepository.searchById(userId, productId)
+      ).toJSON();
       res.status(200).json({
         ...product,
         responseInfo: {
@@ -155,6 +154,43 @@ export const ProductsTableController = {
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar deletar o produto",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
+  },
+
+  uploadImage: async (req: any, res: any) => {
+    try {
+      const { userId, productId } = req.params;
+
+      if (!userId) throw new Error("ID do usuário não informado");
+      if (!productId) throw new Error("ID do produto não informado");
+      if (!req.file) throw new Error("Imagem do produto inválida");
+      const pathImage = await compressImage(req.file);
+
+      const productRepository = new ProductsTableRepository();
+      const oldImg = (await productRepository.searchById(userId, productId)).toJSON()?.link_image;
+      deleteImage(oldImg)
+
+      const product = (
+        await productRepository.update(userId, productId, {
+          link_image: pathImage,
+        } as any)
+      ).toJSON();
+
+      res.status(200).json({
+        link_image: product.link_image,
+        responseInfo: {
+          statusCode: 200,
+          msg: "Upload da imagem realizado com sucesso",
+        },
+      });
+    } catch (error: any) {
+      deleteImage(req?.file?.path);
+
+      res.status(400).json({
+        errorMessage: "Erro no upload da imagem do produto.",
         error: error.message ? error.message : error,
         statusCode: 400,
       });
