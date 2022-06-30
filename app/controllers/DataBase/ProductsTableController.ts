@@ -47,7 +47,10 @@ export const ProductsTableController = {
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const productRepository = new ProductsTableRepository();
-      res.status(200).json(await productRepository.searchAll(userId));
+      res.status(200).json(await productRepository.searchAll(userId, {
+        limit: req?.query?.limit,
+        page: req?.query?.page,
+      }));
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todos os produtos",

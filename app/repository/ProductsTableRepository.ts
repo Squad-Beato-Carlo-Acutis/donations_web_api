@@ -1,6 +1,11 @@
 import { TabProducts, TypeTabProducts } from "../models/TabProducts";
 import { TabUsers } from "../models/TabUsers";
 
+type PaginationType = {
+  limit?: string;
+  page?: string;
+};
+
 export class ProductsTableRepository {
   async searchById(userId: number, productId: number): Promise<TabProducts> {
     const product = await TabProducts.findOne({
@@ -14,13 +19,35 @@ export class ProductsTableRepository {
     return product;
   }
 
-  async searchAll(userId: number): Promise<Array<TabProducts>> {
-    return TabProducts.findAll({
+  async searchAll(
+    userId: number,
+    pagination?: PaginationType
+  ): Promise<{
+    data: Array<TabProducts>;
+    totalPages: number;
+  }> {
+    const offset = pagination?.page
+      ? parseInt(pagination?.page, 10) - 1
+      : undefined;
+    const limit = pagination?.limit
+      ? parseInt(pagination?.limit, 10)
+      : undefined;
+
+    const page = offset && offset !== -1 && limit ? offset * limit : 0;
+
+    const teste = await TabProducts.findAndCountAll({
+      limit,
+      offset: page,
       where: {
         tb_user_id: userId,
       },
       include: [{ association: "measure" }, { association: "category" }],
     });
+
+    return {
+      data: teste.rows,
+      totalPages: parseInt((limit ? teste.count / limit : 1).toFixed(0)),
+    };
   }
 
   async create(userId: number, product: TypeTabProducts): Promise<TabProducts> {
