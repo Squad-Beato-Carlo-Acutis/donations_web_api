@@ -5,6 +5,7 @@ import { TabProductsNeeded } from "../models/TabProductsNeeded";
 import { TabProductStockMovement } from "../models/TabProductStockMovement";
 import { TabStockMovement } from "../models/TabStockMovement";
 import { TabUsers } from "../models/TabUsers";
+import { PaginationType } from "../types/PaginationType";
 
 type TypeProductMovement = {
   productId: number;
@@ -46,9 +47,24 @@ export class StockMovementRepository {
 
   async searchAll(
     userId: number,
-    conferenceId: number
-  ): Promise<Array<TabStockMovement>> {
-    return TabStockMovement.findAll({
+    conferenceId: number,
+    pagination?: PaginationType
+  ): Promise<{
+    data: Array<TabStockMovement>;
+    totalPages: number;
+  }> {
+    const offset = pagination?.page
+      ? parseInt(pagination?.page, 10) - 1
+      : undefined;
+    const limit = pagination?.limit
+      ? parseInt(pagination?.limit, 10)
+      : undefined;
+
+    const page = offset && offset !== -1 && limit ? offset * limit : 0;
+
+    const stockMovements = await TabStockMovement.findAndCountAll({
+      limit,
+      offset: page,
       where: {
         tb_user_id: userId,
         tb_conference_id: conferenceId,
@@ -66,6 +82,13 @@ export class StockMovementRepository {
         },
       ],
     });
+
+    return {
+      data: stockMovements.rows,
+      totalPages: parseInt(
+        (limit ? stockMovements.count / limit : 1).toFixed(0)
+      ),
+    };
   }
 
   async generateStockMovement({

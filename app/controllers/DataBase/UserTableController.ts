@@ -1,5 +1,12 @@
 import * as yup from "yup";
 import { pt } from "yup-locale-pt";
+import {
+  checkPermission,
+  PM_CREATE_USER,
+  PM_DELETE_USER,
+  PM_LIST_ALL_USER,
+  PM_UPDATE_USER,
+} from "../../config/permissions";
 import { encryptToken } from "../../helpers/encrytToken";
 import { TypeTabUsers } from "../../models/TabUsers";
 import { UserTableRepository } from "../../repository/UserTableRepository";
@@ -18,12 +25,14 @@ export const UserTableController = {
             pws: yup.string().min(8).required(),
             username: yup.string().required(),
             ind_active: yup.boolean().notRequired(),
+            type_user: yup.string().notRequired(),
           })
         : yup.object().shape({
             email: yup.string().email().notRequired(),
             pws: yup.string().min(8).notRequired(),
             username: yup.string().notRequired(),
             ind_active: yup.boolean().notRequired(),
+            type_user: yup.string().notRequired(),
           });
 
     let result: any;
@@ -41,10 +50,23 @@ export const UserTableController = {
 
     return true;
   },
+
   getAll: async (req: any, res: any) => {
     try {
+      if (!checkPermission(req.cdTypeUser, PM_LIST_ALL_USER)) {
+        return res.status(403).json({
+          errorMessage: "Este usuário não tem permissão para acessar essa rota",
+          statusCode: 403,
+        });
+      }
+
       const userRepository = new UserTableRepository();
-      res.status(200).json(await userRepository.searchAll());
+      res.status(200).json(
+        await userRepository.searchAll({
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todos os usuários",
@@ -56,6 +78,13 @@ export const UserTableController = {
 
   create: async (req: any, res: any) => {
     try {
+      if (!checkPermission(req.cdTypeUser, PM_CREATE_USER)) {
+        return res.status(403).json({
+          errorMessage: "Este usuário não tem permissão para acessar essa rota",
+          statusCode: 403,
+        });
+      }
+
       const userRepository = new UserTableRepository();
       const userData = req.body;
       await UserTableController.fieldValidation(userData, "create");
@@ -81,6 +110,13 @@ export const UserTableController = {
 
   update: async (req: any, res: any) => {
     try {
+      if (!checkPermission(req.cdTypeUser, PM_UPDATE_USER)) {
+        return res.status(403).json({
+          errorMessage: "Este usuário não tem permissão para acessar essa rota",
+          statusCode: 403,
+        });
+      }
+
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const userData = req.body;
@@ -135,6 +171,13 @@ export const UserTableController = {
 
   delete: async (req: any, res: any) => {
     try {
+      if (!checkPermission(req.cdTypeUser, PM_DELETE_USER)) {
+        return res.status(403).json({
+          errorMessage: "Este usuário não tem permissão para acessar essa rota",
+          statusCode: 403,
+        });
+      }
+
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const userRepository = new UserTableRepository();
@@ -148,6 +191,7 @@ export const UserTableController = {
       });
     }
   },
+
   login: async (req: any, res: any) => {
     try {
       const { email, pws } = req.body;
@@ -156,10 +200,14 @@ export const UserTableController = {
         throw new Error("os campos email e pws são obrigátórios");
 
       const userRepository = new UserTableRepository();
-      const { userFound, userId } = await userRepository.login(email, pws);
+      const { userFound, userId, userName, typeUser } =
+        await userRepository.login(email, pws);
 
       if (userFound) {
-        const token = await encryptToken({ userId: userId ?? 0 });
+        const token = await encryptToken({
+          userId: userId ?? 0,
+          typeUser: typeUser ?? "DEFAULT",
+        });
 
         res.status(200).json({
           auth: userFound,
@@ -167,6 +215,11 @@ export const UserTableController = {
           responseInfo: {
             statusCode: 200,
             msg: "Login realizado com sucesso",
+          },
+          userData: {
+            userId,
+            userName,
+            typeUser,
           },
         });
       } else {

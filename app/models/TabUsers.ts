@@ -6,6 +6,7 @@ export type TypeTabUsers = {
   pws: string,
   username: string,
   ind_active: boolean,
+  type_user?: string
 };
 
 export class TabUsers extends Model<TypeTabUsers> {
@@ -15,6 +16,7 @@ export class TabUsers extends Model<TypeTabUsers> {
       pws: DataTypes.STRING,
       username: DataTypes.STRING,
       ind_active: DataTypes.BOOLEAN,
+      type_user: DataTypes.STRING,
     }, {
       sequelize,
       tableName: 'tb_users'

@@ -1,5 +1,6 @@
 export type ParamsTypeTokenEncripted = {
   userId: number
+  typeUser: string
 };
 
 export type TypeLoginToken = {

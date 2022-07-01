@@ -1,0 +1,13 @@
+name: remote ssh command
+on: [push]
+jobs:
+
+  build:
+    name: executing remote ssh commands using ssh key
+    uses: Squad-Beato-Carlo-Acutis/donations_web_api@master
+    with:
+      host: ${{ secrets.HOST_SERVER }}
+      username: ${{ secrets.USERNAME_SERVER }}
+      key: ${{ secrets.KEY_SERVER }}
+      port: ${{ secrets.PORT_SERVER }}
+      script: whoami

@@ -70,7 +70,10 @@ export const BasicBasketTableController = {
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const basicBasketRepository = new BasicBasketTableRepository();
-      res.status(200).json(await basicBasketRepository.searchAll(userId));
+      res.status(200).json(await basicBasketRepository.searchAll(userId, {
+        limit: req?.query?.limit,
+        page: req?.query?.page,
+      }));
     } catch (error: any) {
       console.error(error)
       res.status(400).json({

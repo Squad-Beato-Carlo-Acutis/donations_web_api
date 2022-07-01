@@ -1,5 +1,7 @@
 import * as yup from "yup";
 import { pt } from "yup-locale-pt";
+import { compressImage, deleteImage } from "../../helpers/helperImage";
+import { customMulter } from "../../helpers/uploadImages";
 import { TypeTabConfereces } from "../../models/TabConfereces";
 import { ConferencesTableRepository } from "../../repository/ConferencesTableRepository";
 
@@ -14,7 +16,6 @@ export const ConferencesTableController = {
       typeValidation === "create"
         ? yup.object().shape({
             description: yup.string().required(),
-            link_avatar: yup.string().notRequired(),
             about: yup.string().required(),
             title_address: yup.string().required(),
             address: yup.string().required(),
@@ -23,7 +24,6 @@ export const ConferencesTableController = {
           })
         : yup.object().shape({
             description: yup.string().notRequired(),
-            link_avatar: yup.string().notRequired(),
             about: yup.string().notRequired(),
             title_address: yup.string().notRequired(),
             address: yup.string().notRequired(),
@@ -52,7 +52,12 @@ export const ConferencesTableController = {
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const conferenceRepository = new ConferencesTableRepository();
-      res.status(200).json(await conferenceRepository.searchAll(userId));
+      res.status(200).json(
+        await conferenceRepository.searchAll(userId, {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todas as conferencias",
@@ -66,12 +71,14 @@ export const ConferencesTableController = {
     try {
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
-      const conferenceRepository = new ConferencesTableRepository();
+
       const conferenceData = req.body;
       await ConferencesTableController.fieldValidation(
         conferenceData,
         "create"
       );
+
+      const conferenceRepository = new ConferencesTableRepository();
       const conference = (
         await conferenceRepository.create(userId, conferenceData)
       ).toJSON();
@@ -104,6 +111,7 @@ export const ConferencesTableController = {
         conferenceData,
         "update"
       );
+
       const conferenceRepository = new ConferencesTableRepository();
       const conference = (
         await conferenceRepository.update(userId, conferenceId, conferenceData)
@@ -127,12 +135,14 @@ export const ConferencesTableController = {
 
   getById: async (req: any, res: any) => {
     try {
-      const { userId, conferenceId} = req.params;
+      const { userId, conferenceId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       if (!conferenceId) throw new Error("ID da conferencia não informado");
 
       const conferenceRepository = new ConferencesTableRepository();
-      const conference = (await conferenceRepository.searchById(userId, conferenceId)).toJSON();
+      const conference = (
+        await conferenceRepository.searchById(userId, conferenceId)
+      ).toJSON();
       res.status(200).json({
         ...conference,
         responseInfo: {
@@ -161,6 +171,45 @@ export const ConferencesTableController = {
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar deletar a conferencia",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
+  },
+
+  uploadImage: async (req: any, res: any) => {
+    try {
+      const { userId, conferenceId } = req.params;
+
+      if (!userId) throw new Error("ID do usuário não informado");
+      if (!conferenceId) throw new Error("ID da conferencia não informado");
+      if (!req.file) throw new Error("Imagem da conferencia inválida");
+      const pathImage = await compressImage(req.file);
+
+      const conferenceRepository = new ConferencesTableRepository();
+      const oldImg = (
+        await conferenceRepository.searchById(userId, conferenceId)
+      ).toJSON()?.link_avatar;
+      deleteImage(oldImg);
+
+      const conference = (
+        await conferenceRepository.update(userId, conferenceId, {
+          link_avatar: pathImage,
+        } as any)
+      ).toJSON();
+
+      res.status(200).json({
+        link_avatar: conference.link_avatar,
+        responseInfo: {
+          statusCode: 200,
+          msg: "Upload da imagem realizado com sucesso",
+        },
+      });
+    } catch (error: any) {
+      deleteImage(req?.file?.path);
+
+      res.status(400).json({
+        errorMessage: "Erro no upload da imagem da conferencia.",
         error: error.message ? error.message : error,
         statusCode: 400,
       });

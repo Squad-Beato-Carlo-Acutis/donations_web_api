@@ -1,9 +1,16 @@
 import { TabBasicBasket, TypeTabBasicBasket } from "../models/TabBasicBasket";
-import { TabProductBasicBasket, TypeInsertByBasicBasket } from "../models/TabProductBasicBasket";
+import {
+  TabProductBasicBasket,
+  TypeInsertByBasicBasket,
+} from "../models/TabProductBasicBasket";
 import { TabUsers } from "../models/TabUsers";
+import { PaginationType } from "../types/PaginationType";
 
 export class BasicBasketTableRepository {
-  async searchById(userId: number, basicBasketId: number): Promise<TabBasicBasket> {
+  async searchById(
+    userId: number,
+    basicBasketId: number
+  ): Promise<TabBasicBasket> {
     const basicBasket = await TabBasicBasket.findOne({
       where: {
         id: basicBasketId,
@@ -15,16 +22,41 @@ export class BasicBasketTableRepository {
     return basicBasket;
   }
 
-  async searchAll(userId: number): Promise<Array<TabBasicBasket>> {
-    return TabBasicBasket.findAll({
+  async searchAll(
+    userId: number,
+    pagination?: PaginationType
+  ): Promise<{
+    data: Array<TabBasicBasket>;
+    totalPages: number;
+  }> {
+    const offset = pagination?.page
+      ? parseInt(pagination?.page, 10) - 1
+      : undefined;
+    const limit = pagination?.limit
+      ? parseInt(pagination?.limit, 10)
+      : undefined;
+
+    const page = offset && offset !== -1 && limit ? offset * limit : 0;
+
+    const basicBaskets = await TabBasicBasket.findAndCountAll({
+      limit,
+      offset: page,
       where: {
         tb_user_id: userId,
       },
       include: [{ association: "products" }],
     });
+
+    return {
+      data: basicBaskets.rows,
+      totalPages: parseInt((limit ? basicBaskets.count / limit : 1).toFixed(0)),
+    };
   }
 
-  async create(userId: number, basicBasket: TypeTabBasicBasket): Promise<TabBasicBasket> {
+  async create(
+    userId: number,
+    basicBasket: TypeTabBasicBasket
+  ): Promise<TabBasicBasket> {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
@@ -67,7 +99,11 @@ export class BasicBasketTableRepository {
 
   // Products
 
-  async insertProduct(userId: number, basicBasketId: number, productBasicBasket: TypeInsertByBasicBasket): Promise<TabProductBasicBasket> {
+  async insertProduct(
+    userId: number,
+    basicBasketId: number,
+    productBasicBasket: TypeInsertByBasicBasket
+  ): Promise<TabProductBasicBasket> {
     const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
     if (!basicBasket) throw new Error("Cesta Básica não encontrada");
 
@@ -82,7 +118,11 @@ export class BasicBasketTableRepository {
     });
   }
 
-  async deleteProduct(userId: number, basicBasketId: number, productId: number): Promise<boolean> {
+  async deleteProduct(
+    userId: number,
+    basicBasketId: number,
+    productId: number
+  ): Promise<boolean> {
     const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
     if (!basicBasket) throw new Error("Cesta Básica não encontrada");
 
@@ -90,10 +130,11 @@ export class BasicBasketTableRepository {
       where: {
         tb_basic_basket_id: basicBasketId,
         tb_user_id: userId,
-        tb_product_id: productId
+        tb_product_id: productId,
       },
     });
-    if (!productBasicBasketRegister) throw new Error("Produto da cesta básica não encontrado");
+    if (!productBasicBasketRegister)
+      throw new Error("Produto da cesta básica não encontrado");
 
     productBasicBasketRegister.destroy();
 
