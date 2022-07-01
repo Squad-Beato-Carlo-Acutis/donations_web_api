@@ -61,7 +61,12 @@ export const UserTableController = {
       }
 
       const userRepository = new UserTableRepository();
-      res.status(200).json(await userRepository.searchAll());
+      res.status(200).json(
+        await userRepository.searchAll({
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todos os usuários",

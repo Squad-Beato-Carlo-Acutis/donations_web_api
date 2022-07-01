@@ -1,10 +1,6 @@
 import { TabProducts, TypeTabProducts } from "../models/TabProducts";
 import { TabUsers } from "../models/TabUsers";
-
-type PaginationType = {
-  limit?: string;
-  page?: string;
-};
+import { PaginationType } from "../types/PaginationType";
 
 export class ProductsTableRepository {
   async searchById(userId: number, productId: number): Promise<TabProducts> {
@@ -35,7 +31,7 @@ export class ProductsTableRepository {
 
     const page = offset && offset !== -1 && limit ? offset * limit : 0;
 
-    const teste = await TabProducts.findAndCountAll({
+    const products = await TabProducts.findAndCountAll({
       limit,
       offset: page,
       where: {
@@ -45,8 +41,8 @@ export class ProductsTableRepository {
     });
 
     return {
-      data: teste.rows,
-      totalPages: parseInt((limit ? teste.count / limit : 1).toFixed(0)),
+      data: products.rows,
+      totalPages: parseInt((limit ? products.count / limit : 1).toFixed(0)),
     };
   }
 

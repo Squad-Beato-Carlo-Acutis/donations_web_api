@@ -37,9 +37,12 @@ export const StockMovementController = {
       if (!conferenceId) throw new Error("ID da conferencia não informada");
 
       const stockMovementRepository = new StockMovementRepository();
-      res
-        .status(200)
-        .json(await stockMovementRepository.searchAll(userId, conferenceId));
+      res.status(200).json(
+        await stockMovementRepository.searchAll(userId, conferenceId, {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       console.error(error);
       res.status(400).json({
@@ -110,13 +113,17 @@ export const StockMovementController = {
 
   inactivateStockMovement: async (req: any, res: any) => {
     try {
-      const { userId, conferenceId, stockMovementId} = req.params;
+      const { userId, conferenceId, stockMovementId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       if (!conferenceId) throw new Error("ID da conferencia não informada");
       if (!stockMovementId) throw new Error("ID do movimento não informado");
 
       const stockMovementRepository = new StockMovementRepository();
-      await stockMovementRepository.inactivateStockMovement(userId, stockMovementId, conferenceId)
+      await stockMovementRepository.inactivateStockMovement(
+        userId,
+        stockMovementId,
+        conferenceId
+      );
 
       res.status(204).json();
     } catch (error: any) {
@@ -138,7 +145,9 @@ export const StockMovementController = {
       const stockMovementRepository = new StockMovementRepository();
       res
         .status(200)
-        .json(await stockMovementRepository.getCurrentStock(userId, conferenceId));
+        .json(
+          await stockMovementRepository.getCurrentStock(userId, conferenceId)
+        );
     } catch (error: any) {
       console.error(error);
       res.status(400).json({
@@ -159,7 +168,10 @@ export const StockMovementController = {
       res
         .status(200)
         .json(
-          await stockMovementRepository.getNeededProductsStock(userId, conferenceId)
+          await stockMovementRepository.getNeededProductsStock(
+            userId,
+            conferenceId
+          )
         );
     } catch (error: any) {
       console.error(error);

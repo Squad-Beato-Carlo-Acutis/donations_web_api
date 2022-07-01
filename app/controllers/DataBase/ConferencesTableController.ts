@@ -52,7 +52,12 @@ export const ConferencesTableController = {
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const conferenceRepository = new ConferencesTableRepository();
-      res.status(200).json(await conferenceRepository.searchAll(userId));
+      res.status(200).json(
+        await conferenceRepository.searchAll(userId, {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todas as conferencias",
@@ -182,8 +187,10 @@ export const ConferencesTableController = {
       const pathImage = await compressImage(req.file);
 
       const conferenceRepository = new ConferencesTableRepository();
-      const oldImg = (await conferenceRepository.searchById(userId, conferenceId)).toJSON()?.link_avatar;
-      deleteImage(oldImg)
+      const oldImg = (
+        await conferenceRepository.searchById(userId, conferenceId)
+      ).toJSON()?.link_avatar;
+      deleteImage(oldImg);
 
       const conference = (
         await conferenceRepository.update(userId, conferenceId, {

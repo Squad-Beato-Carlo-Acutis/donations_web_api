@@ -1,5 +1,6 @@
 import { TabConfereces, TypeTabConfereces } from "../models/TabConfereces";
 import { TabUsers } from "../models/TabUsers";
+import { PaginationType } from "../types/PaginationType";
 
 export class ConferencesTableRepository {
   async searchById(
@@ -10,18 +11,40 @@ export class ConferencesTableRepository {
       where: {
         id: conferenceId,
         tb_user_id: userId,
-      }
+      },
     });
     if (!conference) throw new Error("Conferencia não encontrada");
     return conference;
   }
 
-  async searchAll(userId: number): Promise<Array<TabConfereces>> {
-    return await TabConfereces.findAll({
+  async searchAll(
+    userId: number,
+    pagination?: PaginationType
+  ): Promise<{
+    data: Array<TabConfereces>;
+    totalPages: number;
+  }> {
+    const offset = pagination?.page
+      ? parseInt(pagination?.page, 10) - 1
+      : undefined;
+    const limit = pagination?.limit
+      ? parseInt(pagination?.limit, 10)
+      : undefined;
+
+    const page = offset && offset !== -1 && limit ? offset * limit : 0;
+
+    const conferences = await TabConfereces.findAndCountAll({
+      limit,
+      offset: page,
       where: {
         tb_user_id: userId,
       },
     });
+
+    return {
+      data: conferences.rows,
+      totalPages: parseInt((limit ? conferences.count / limit : 1).toFixed(0)),
+    };
   }
 
   async create(
@@ -65,8 +88,8 @@ export class ConferencesTableRepository {
     const conference = await TabConfereces.findOne({
       where: {
         id: conferenceId,
-        tb_user_id: userId
-      }
+        tb_user_id: userId,
+      },
     });
     if (!conference) throw new Error("Conferencia não encontrada");
 

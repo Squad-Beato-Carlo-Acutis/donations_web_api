@@ -1,5 +1,6 @@
 import { encryptSha512 } from "../helpers/encryptSha512";
 import { TabUsers, TypeTabUsers } from "../models/TabUsers";
+import { PaginationType } from "../types/PaginationType";
 
 export class UserTableRepository {
   async searchById(userId: number): Promise<TabUsers> {
@@ -12,10 +13,29 @@ export class UserTableRepository {
     return user;
   }
 
-  async searchAll(): Promise<Array<TabUsers>> {
-    return TabUsers.findAll({
+  async searchAll(pagination?: PaginationType): Promise<{
+    data: Array<TabUsers>;
+    totalPages: number;
+  }> {
+    const offset = pagination?.page
+      ? parseInt(pagination?.page, 10) - 1
+      : undefined;
+    const limit = pagination?.limit
+      ? parseInt(pagination?.limit, 10)
+      : undefined;
+
+    const page = offset && offset !== -1 && limit ? offset * limit : 0;
+
+    const users = await TabUsers.findAndCountAll({
+      limit,
+      offset: page,
       attributes: ["id", "email", "username"],
     });
+
+    return {
+      data: users.rows,
+      totalPages: parseInt((limit ? users.count / limit : 1).toFixed(0)),
+    };
   }
 
   async create(user: TypeTabUsers): Promise<TabUsers> {
