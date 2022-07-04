@@ -6,7 +6,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using ssh key
+    - name: Get the latest version and compile and build
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.VPS_HOST }}
@@ -15,3 +15,13 @@ jobs:
         port: ${{ secrets.VPS_PORT }}
         script: |
           ls
+          cd repositories/donations_web_api/
+          
+          git pull
+
+          yarn sequelize db:migrate
+          yarn build
+
+          pm2 delete donations-api
+          pm2 start build/server.js --name donations-api
+          pm2 save
