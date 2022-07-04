@@ -1,13 +1,31 @@
-name: remote ssh command
-on: [push]
+name: Deploy in production
+on: 
+  push:
+    branches:
+      - main
 jobs:
 
   build:
-    name: executing remote ssh commands using ssh key
-    uses: Squad-Beato-Carlo-Acutis/donations_web_api@master
-    with:
-      host: ${{ secrets.HOST_SERVER }}
-      username: ${{ secrets.USERNAME_SERVER }}
-      key: ${{ secrets.KEY_SERVER }}
-      port: ${{ secrets.PORT_SERVER }}
-      script: whoami
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get the latest version and compile and build
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: |
+          ls
+          cd repositories/donations_web_api/
+          
+          git pull
+
+          yarn
+          yarn sequelize db:migrate
+          yarn build
+
+          pm2 delete donations-api
+          pm2 start build/server.js --name donations-api
+          pm2 save
