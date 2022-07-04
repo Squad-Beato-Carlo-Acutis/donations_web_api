@@ -1,0 +1,14 @@
+[
+  {
+    "description": "Alimentação",
+    "posit_level": 1
+  },
+  {
+    "description": "Higiene Pessoal",
+    "posit_level": 2
+  },
+  {
+    "description": "Diversos",
+    "posit_level": 3
+  }
+]
