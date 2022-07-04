@@ -3,11 +3,14 @@ on: [push]
 jobs:
 
   build:
-    name: executing remote ssh commands using ssh key
-    uses: Squad-Beato-Carlo-Acutis/donations_web_api@master
-    with:
-      host: ${{ secrets.HOST_SERVER }}
-      username: ${{ secrets.USERNAME_SERVER }}
-      key: ${{ secrets.KEY_SERVER }}
-      port: ${{ secrets.PORT_SERVER }}
-      script: whoami
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.VPS_KEY }}
+        port: ${{ secrets.VPS_PORT }}
+        script: whoami
