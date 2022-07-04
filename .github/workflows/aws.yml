@@ -1,9 +1,9 @@
-name: remote ssh command
+name: Deploy in production
 on: [push]
 jobs:
 
   build:
-    name: Build
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using ssh key
@@ -13,4 +13,5 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_KEY }}
         port: ${{ secrets.VPS_PORT }}
-        script: whoami
+        script: |
+          ls
