@@ -1,6 +1,8 @@
 import express from "express";
 import { BasicBasketTableController } from "./controllers/DataBase/BasicBasketTableController";
+import { CategoryTableController } from "./controllers/DataBase/CategoryTableController";
 import { ConferencesTableController } from "./controllers/DataBase/ConferencesTableController";
+import { MeasureTableController } from "./controllers/DataBase/MeasureTableController";
 import { ProductsNeededController } from "./controllers/DataBase/ProductsNeededController";
 import { ProductsTableController } from "./controllers/DataBase/ProductsTableController";
 import { StockMovementController } from "./controllers/DataBase/StockMovementController";
@@ -160,5 +162,17 @@ routes.get(
   userAuth,
   StockMovementController.getNeededProductsStock
 );
+
+// Private routes Measures
+routes.get("/api/v1/measure", userAuth, MeasureTableController.getAll);
+routes.post("/api/v1/measure", userAuth, MeasureTableController.create);
+routes.patch("/api/v1/measure/:measureId", userAuth, MeasureTableController.update);
+routes.delete("/api/v1/measure/:measureId", userAuth, MeasureTableController.delete);
+
+// Private routes Categoies
+routes.get("/api/v1/category", userAuth, CategoryTableController.getAll);
+routes.post("/api/v1/category", userAuth, CategoryTableController.create);
+routes.patch("/api/v1/category/:categoryId", userAuth, CategoryTableController.update);
+routes.delete("/api/v1/category/:categoryId", userAuth, CategoryTableController.delete);
 
 export { routes };

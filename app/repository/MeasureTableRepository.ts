@@ -19,7 +19,7 @@ export class MeasureTableRepository {
     const measures = await TabMeasures.findAndCountAll({
       limit,
       offset: page,
-      attributes: ["description", "abbreviation"],
+      attributes: ["id", "description", "abbreviation"],
     });
 
     return {
@@ -39,14 +39,14 @@ export class MeasureTableRepository {
     return TabMeasures.create(measureCreate);
   }
 
-  async update(measureId: number, userId: number, data: TypeTabMeasures): Promise<TabMeasures> {
+  async update( userId: number, measureId: number, data: TypeTabMeasures): Promise<TabMeasures> {
     const measure = await TabMeasures.findOne({
       where: {
         id: measureId,
         tb_user_id: userId
       }
     });
-    if (!measure) throw new Error("Usuário não encontrado");
+    if (!measure) throw new Error("Medida não encontrada");
 
     await measure.update(data);
 
@@ -60,7 +60,7 @@ export class MeasureTableRepository {
         id: measureId
       }
     });
-    if (!measure) throw new Error("Usuário não encontrado");
+    if (!measure) throw new Error("Medida não encontrada");
 
     measure.destroy();
 
