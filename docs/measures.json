@@ -1,0 +1,38 @@
+[
+  {
+    "description": "Litro(s)",
+    "abbreviation": "L"
+  },
+  {
+    "description": "Quilograma(s)",
+    "abbreviation": "Kg"
+  },
+  {
+    "description": "Grama(s)",
+    "abbreviation": "g"
+  },
+  {
+    "description": "Unidade(s)",
+    "abbreviation": "Un"
+  },
+  {
+    "description": "Caixa(s)",
+    "abbreviation": "Cx"
+  },
+  {
+    "description": "Peça(s)",
+    "abbreviation": "Pç"
+  },
+  {
+    "description": "Pacote(s)",
+    "abbreviation": "Pt"
+  },
+  {
+    "description": "Rolo(s)",
+    "abbreviation": "Rl"
+  },
+  {
+    "description": "Cartela(s)",
+    "abbreviation": "Ct"
+  }
+]
