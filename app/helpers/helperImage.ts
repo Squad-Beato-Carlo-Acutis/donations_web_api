@@ -3,6 +3,10 @@ import sharp from "sharp";
 
 export const deleteImage = (path?: string) => {
   if(!path) return
+  
+  if(!path.includes(`${process.env.ENV_IMAGE_DIRECTORY || ''}`)) {
+    path = `${process.env.ENV_IMAGE_DIRECTORY || ''}${path}`
+  }
 
   const completePath = `${path}`
   
