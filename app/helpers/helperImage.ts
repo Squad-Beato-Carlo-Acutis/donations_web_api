@@ -3,10 +3,14 @@ import sharp from "sharp";
 
 export const deleteImage = (path?: string) => {
   if(!path) return
+  console.log("TCL: deleteImage -> path", path)
+  console.log("TCL: deleteImage -> ENV_IMAGE_DIRECTORY => ", `${process.env.ENV_IMAGE_DIRECTORY || ''}`)
   
   if(!path.includes(`${process.env.ENV_IMAGE_DIRECTORY || ''}`)) {
     path = `${process.env.ENV_IMAGE_DIRECTORY || ''}${path}`
   }
+
+  console.log("TCL: deleteImage -> path (pós)", path)
 
   const completePath = `${path}`
   
