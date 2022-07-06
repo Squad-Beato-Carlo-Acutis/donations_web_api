@@ -171,7 +171,6 @@ export const ProductsTableController = {
       if (!productId) throw new Error("ID do produto não informado");
       if (!req.file) throw new Error("Imagem do produto inválida");
       const pathImage = await compressImage(req.file);
-
       const productRepository = new ProductsTableRepository();
       const oldImg = (await productRepository.searchById(userId, productId)).toJSON()?.link_image;
       deleteImage(oldImg)

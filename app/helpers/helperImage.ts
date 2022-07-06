@@ -4,7 +4,7 @@ import sharp from "sharp";
 export const deleteImage = (path?: string) => {
   if(!path) return
 
-  const completePath = `~${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`
+  const completePath = `${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`
   
   fs.access(completePath, (err) => {
     if (!err) {
@@ -50,7 +50,7 @@ export const compressImage = (file: any) => {
           }
         });
 
-        const path = `~${process.env.ENV_IMAGE_DIRECTORY?.replace('/', '\\')}\\`
+        const path = `${process.env.ENV_IMAGE_DIRECTORY?.replace('/', '\\')}\\`
 
         // Se o código chegou até aqui, deu tudo certo, então vamos retornar o novo caminho
         return newPath.replace(path, '');

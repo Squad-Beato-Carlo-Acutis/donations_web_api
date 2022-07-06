@@ -3,11 +3,11 @@ import fs from "fs";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    if (!fs.existsSync(`~${process.env.ENV_IMAGE_DIRECTORY}`)){
+    if (!fs.existsSync(`${process.env.ENV_IMAGE_DIRECTORY}`)){
       //Efetua a criação do diretório
-        fs.mkdirSync(`~${process.env.ENV_IMAGE_DIRECTORY}`);
+        fs.mkdirSync(`${process.env.ENV_IMAGE_DIRECTORY}`);
     }
-    cb(null, `~${process.env.ENV_IMAGE_DIRECTORY}`);
+    cb(null, `${process.env.ENV_IMAGE_DIRECTORY}`);
   },
   filename: function (req, file, cb) {
     cb(null, `${Date.now().toString()}-${file.fieldname}`);
