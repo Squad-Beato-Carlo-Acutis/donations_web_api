@@ -6,7 +6,7 @@ export const deleteImage = (path?: string) => {
   console.log("TCL: deleteImage -> path =>", path)
   console.log("TCL: deleteImage -> path(Completo) =>", `${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`)
 
-  const completePath = `${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`
+  const completePath = `${process.env.ENV_IMAGE_DIRECTORY || ''}${path}`
   
   fs.access(completePath, (err) => {
   console.log("TCL: deleteImage -> error => ", err)
