@@ -47,10 +47,12 @@ export const ProductsTableController = {
       const { userId } = req.params;
       if (!userId) throw new Error("ID do usuário não informado");
       const productRepository = new ProductsTableRepository();
-      res.status(200).json(await productRepository.searchAll(userId, {
-        limit: req?.query?.limit,
-        page: req?.query?.page,
-      }));
+      res.status(200).json(
+        await productRepository.searchAll(userId, {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       res.status(400).json({
         errorMessage: "Erro ao tentar buscar todos os produtos",
@@ -164,16 +166,19 @@ export const ProductsTableController = {
   },
 
   uploadImage: async (req: any, res: any) => {
+    let pathImage = null;
     try {
       const { userId, productId } = req.params;
 
       if (!userId) throw new Error("ID do usuário não informado");
       if (!productId) throw new Error("ID do produto não informado");
       if (!req.file) throw new Error("Imagem do produto inválida");
-      const pathImage = await compressImage(req.file);
+      pathImage = await compressImage(req.file);
       const productRepository = new ProductsTableRepository();
-      const oldImg = (await productRepository.searchById(userId, productId)).toJSON()?.link_image;
-      deleteImage(oldImg)
+      const oldImg = (
+        await productRepository.searchById(userId, productId)
+      ).toJSON()?.link_image;
+      deleteImage(oldImg);
 
       const product = (
         await productRepository.update(userId, productId, {
@@ -189,7 +194,7 @@ export const ProductsTableController = {
         },
       });
     } catch (error: any) {
-      deleteImage(req?.file?.path);
+      deleteImage(pathImage || "");
 
       res.status(400).json({
         errorMessage: "Erro no upload da imagem do produto.",

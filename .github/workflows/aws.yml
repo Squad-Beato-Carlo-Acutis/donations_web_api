@@ -26,6 +26,6 @@ jobs:
           yarn sequelize db:migrate
           yarn build
 
-          pm2 delete donations-api
-          pm2 start build/server.js --name donations-api
-          pm2 save
+          sudo pm2 delete donations-api
+          sudo pm2 start build/server.js --name donations-api
+          sudo pm2 save

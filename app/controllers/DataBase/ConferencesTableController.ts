@@ -178,13 +178,14 @@ export const ConferencesTableController = {
   },
 
   uploadImage: async (req: any, res: any) => {
+    let pathImage = null
     try {
       const { userId, conferenceId } = req.params;
 
       if (!userId) throw new Error("ID do usuário não informado");
       if (!conferenceId) throw new Error("ID da conferencia não informado");
       if (!req.file) throw new Error("Imagem da conferencia inválida");
-      const pathImage = await compressImage(req.file);
+      pathImage = await compressImage(req.file);
 
       const conferenceRepository = new ConferencesTableRepository();
       const oldImg = (
@@ -206,7 +207,7 @@ export const ConferencesTableController = {
         },
       });
     } catch (error: any) {
-      deleteImage(req?.file?.path);
+      deleteImage(pathImage || '');
 
       res.status(400).json({
         errorMessage: "Erro no upload da imagem da conferencia.",

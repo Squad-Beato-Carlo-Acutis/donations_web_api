@@ -37,7 +37,7 @@ export const compressImage = (file: any) => {
             //Se não houve erros, tentamos apagar
             fs.unlink(file.path, (err) => {
               // Não quero que erros aqui parem todo o sistema, então só vou imprimir o erro, sem throw.
-              if (err) console.log(err);
+              if (err) console.error(err);
             });
           }
         });
