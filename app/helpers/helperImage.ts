@@ -7,7 +7,7 @@ export const deleteImage = (path?: string) => {
   console.log("TCL: deleteImage -> ENV_IMAGE_DIRECTORY => ", `${process.env.ENV_IMAGE_DIRECTORY || ''}`)
   
   if(!path.includes(`${process.env.ENV_IMAGE_DIRECTORY || ''}`)) {
-    path = `${process.env.ENV_IMAGE_DIRECTORY || ''}${path}`
+    path = `${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`
   }
 
   console.log("TCL: deleteImage -> path (pós)", path)
