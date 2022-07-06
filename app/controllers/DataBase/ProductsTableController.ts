@@ -182,7 +182,7 @@ export const ProductsTableController = {
 
       const product = (
         await productRepository.update(userId, productId, {
-          link_image: pathImage.replace(`${process.env.ENV_IMAGE_DIRECTORY || ''}`, ''),
+          link_image: pathImage.replace(`${process.env.ENV_IMAGE_DIRECTORY || ''}/`, ''),
         } as any)
       ).toJSON();
 
