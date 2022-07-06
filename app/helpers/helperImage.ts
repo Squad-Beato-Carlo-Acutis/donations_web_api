@@ -4,9 +4,9 @@ import sharp from "sharp";
 export const deleteImage = (path?: string) => {
   if(!path) return
   console.log("TCL: deleteImage -> path =>", path)
-  console.log("TCL: deleteImage -> path(Completo) =>", `${process.env.ENV_IMAGE_DIRECTORY || ''}/${path}`)
+  console.log("TCL: deleteImage -> ENV_IMAGE_DIRECTORY =>", `${process.env.ENV_IMAGE_DIRECTORY || ''}`)
 
-  const completePath = `${process.env.ENV_IMAGE_DIRECTORY || ''}${path}`
+  const completePath = `${path}`
   
   fs.access(completePath, (err) => {
   console.log("TCL: deleteImage -> error => ", err)
