@@ -39,7 +39,6 @@ export class TabProductStockMovement extends Model<TypeTabItemStockMovement> {
   }
 
   static associate(models: any) {
-    this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
 
     this.hasOne(models.TabProducts, {
       sourceKey: "tb_product_id",
