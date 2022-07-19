@@ -59,15 +59,10 @@ export class TabProductBasicBasket extends Model<TypeTabProductBasicBasket> {
   static associate(models: any) {
     this.belongsTo(models.TabUsers, { foreignKey: "tb_user_id", as: "users" });
 
-    this.hasOne(models.TabMeasures, {
-      sourceKey: "tb_measure_id",
+    this.hasOne(models.TabProducts, {
+      sourceKey: "tb_product_id",
       foreignKey: "id",
-      as: "measure",
-    });
-    this.hasOne(models.TabCategories, {
-      sourceKey: "tb_category_id",
-      foreignKey: "id",
-      as: "category",
+      as: "product",
     });
   }
 }
