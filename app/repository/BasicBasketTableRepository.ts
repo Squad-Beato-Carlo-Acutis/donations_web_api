@@ -44,7 +44,20 @@ export class BasicBasketTableRepository {
       where: {
         tb_user_id: userId,
       },
-      include: [{ association: "products" }],
+      include: [
+        {
+          association: "products",
+          include: [
+            {
+              association: "product",
+              include: [
+                { association: "measure" },
+                { association: "category" },
+              ],
+            },
+          ],
+        },
+      ],
     });
 
     return {
