@@ -61,6 +61,8 @@ export const ProductsNeededController = {
             productId: product.tb_product_id,
             productDescription: product.products.description,
             productMeasurement: product.products.measure.abbreviation,
+            productFullMeasurement: product.products.measure.description,
+            productLinkImage: product.products.link_image,
             quantity: product.quantity,
           };
         })
