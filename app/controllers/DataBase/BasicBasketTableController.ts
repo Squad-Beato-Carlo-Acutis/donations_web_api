@@ -1,6 +1,7 @@
 import * as yup from "yup";
 import { pt } from "yup-locale-pt";
 import { TypeTabBasicBasket } from "../../models/TabBasicBasket";
+import { TypeInsertByBasicBasket } from "../../models/TabProductBasicBasket";
 import { BasicBasketTableRepository } from "../../repository/BasicBasketTableRepository";
 
 // UserTableController
@@ -215,6 +216,44 @@ export const BasicBasketTableController = {
 
       res.status(200).json({
         ...productBasicBasket,
+        responseInfo: {
+          statusCode: 200,
+          msg: "Produto cadastrado com sucesso na cesta básica",
+        },
+      });
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro no cadastro do produto na cesta básica.",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
+  },
+  deleteAllAndInsertBulkProduct: async (req: any, res: any) => {
+    try {
+      const { basicBasketId, userId } = req.params;
+      if (!userId) throw new Error("ID do usuário não informado");
+      if (!basicBasketId) throw new Error("ID da Cesta básica não informada");
+      const productBasicBasketRepository = new BasicBasketTableRepository();
+      const productBasicBasketData = req.body;
+      if(!productBasicBasketData?.length) throw new Error("Nenhum produto informado");
+      
+      productBasicBasketData.forEach(async (product: TypeTabBasicBasket) => {
+        await BasicBasketTableController.checkValidFieldsProductBasicBasket(
+          product
+        );
+      })
+      
+      const productBasicBasket = (
+        await productBasicBasketRepository.deleteAllAndInsertBulkProduct(
+          userId,
+          basicBasketId,
+          productBasicBasketData
+        )
+      );
+
+      res.status(200).json({
+        products: productBasicBasket,
         responseInfo: {
           statusCode: 200,
           msg: "Produto cadastrado com sucesso na cesta básica",

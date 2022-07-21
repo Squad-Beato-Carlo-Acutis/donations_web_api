@@ -108,6 +108,11 @@ routes.post(
   userAuth,
   BasicBasketTableController.insertProduct
 );
+routes.put(
+  "/api/v1/basicbasket/:basicBasketId/product",
+  userAuth,
+  BasicBasketTableController.deleteAllAndInsertBulkProduct
+);
 routes.delete(
   "/api/v1/basicbasket/:basicBasketId/product/:productId",
   userAuth,

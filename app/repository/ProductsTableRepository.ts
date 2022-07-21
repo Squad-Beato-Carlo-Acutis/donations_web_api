@@ -1,3 +1,4 @@
+import { deleteImage } from "../helpers/helperImage";
 import { TabProducts, TypeTabProducts } from "../models/TabProducts";
 import { TabUsers } from "../models/TabUsers";
 import { PaginationType } from "../types/PaginationType";
@@ -84,6 +85,9 @@ export class ProductsTableRepository {
       },
     });
     if (!product) throw new Error("Produto não encontrado");
+
+    const oldImg = product.toJSON()?.link_image;
+    deleteImage(oldImg);
 
     product.destroy();
 
