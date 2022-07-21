@@ -131,6 +131,38 @@ export class BasicBasketTableRepository {
     });
   }
 
+  async deleteAllAndInsertBulkProduct(
+    userId: number,
+    basicBasketId: number,
+    productBasicBasket: TypeInsertByBasicBasket[]
+  ): Promise<TabProductBasicBasket[]> {
+    const basicBasket = await TabBasicBasket.findByPk(basicBasketId);
+    if (!basicBasket) throw new Error("Cesta Básica não encontrada");
+
+    await TabProductBasicBasket.destroy({
+      where: {
+        tb_basic_basket_id: basicBasketId,
+        tb_user_id: userId,
+      },
+    })
+
+    if(!productBasicBasket?.length) throw new Error("Produtos não encontrados");
+
+    const products = productBasicBasket.map((product: TypeInsertByBasicBasket) => {
+      return {
+        tb_user_id: userId,
+        tb_basic_basket_id: basicBasketId,
+        tb_product_id: product.productId,
+        quantity: product.quantity,
+        priority: product.priority,
+        ind_essential: product.ind_essential,
+        ind_active: product.ind_active,
+      }
+    })
+
+    return TabProductBasicBasket.bulkCreate(products);
+  }
+
   async deleteProduct(
     userId: number,
     basicBasketId: number,
