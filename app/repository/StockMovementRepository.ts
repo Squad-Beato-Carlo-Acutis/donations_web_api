@@ -79,6 +79,7 @@ export class StockMovementRepository {
               "currentQuantity",
             ],
           ],
+          include: [{ association: "product" }],
         },
       ],
     });
