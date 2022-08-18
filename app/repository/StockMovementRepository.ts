@@ -73,13 +73,32 @@ export class StockMovementRepository {
         {
           association: "products",
           attributes: [
-            ["tb_product_id", "productId"],
-            [
-              sequelize.fn("sum", sequelize.col("movement_value")),
-              "currentQuantity",
-            ],
+            ["movement_value", "quantity"],
           ],
-          include: [{ association: "product" }],
+          include: [{ 
+            association: "product",
+            attributes: [
+              ["id", "productId"],
+              ["description", "description"],
+            ],
+            include: [
+              { 
+                association: "measure",
+                attributes: [
+                  ["id", "measureId"],
+                  ["description", "description"],
+                  ["abbreviation", "abbreviation"],
+                ],
+              }, 
+              { 
+                association: "category",
+                attributes: [
+                  ["id", "categoryId"],
+                  ["description", "description"],
+                ],
+              }
+            ],
+          }],
         },
       ],
     });
