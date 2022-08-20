@@ -72,35 +72,36 @@ export class StockMovementRepository {
       include: [
         {
           association: "products",
-          attributes: [
-            ["movement_value", "quantity"],
+          attributes: [["movement_value", "quantity"]],
+          include: [
+            {
+              association: "product",
+              attributes: [
+                ["id", "productId"],
+                ["description", "description"],
+              ],
+              include: [
+                {
+                  association: "measure",
+                  attributes: [
+                    ["id", "measureId"],
+                    ["description", "description"],
+                    ["abbreviation", "abbreviation"],
+                  ],
+                },
+                {
+                  association: "category",
+                  attributes: [
+                    ["id", "categoryId"],
+                    ["description", "description"],
+                  ],
+                },
+              ],
+            },
           ],
-          include: [{ 
-            association: "product",
-            attributes: [
-              ["id", "productId"],
-              ["description", "description"],
-            ],
-            include: [
-              { 
-                association: "measure",
-                attributes: [
-                  ["id", "measureId"],
-                  ["description", "description"],
-                  ["abbreviation", "abbreviation"],
-                ],
-              }, 
-              { 
-                association: "category",
-                attributes: [
-                  ["id", "categoryId"],
-                  ["description", "description"],
-                ],
-              }
-            ],
-          }],
         },
       ],
+      order: [["movement_date", "DESC"]],
     });
 
     return {
@@ -124,6 +125,27 @@ export class StockMovementRepository {
 
       const conference = await TabConfereces.findByPk(conferenceId);
       if (!conference) throw new Error("Conferencia não encontrada");
+
+      const currentStock = await this.getCurrentStock(
+        userId.toString(),
+        conferenceId.toString()
+      );
+
+      for (const product in products) {
+        for (const currentProduct in currentStock) {
+          if (
+            products[product].productId ===
+              currentStock[currentProduct].productId &&
+            products[product].movement_value < 0 &&
+            parseInt(currentStock[currentProduct].currentQuantity) <
+              products[product].movement_value * -1
+          ) {
+            throw new Error(
+              `A quantidade do produto ${currentStock[currentProduct].productDescription} é insuficiente para a movimentação desejada`
+            );
+          }
+        }
+      }
 
       const movementDate = new Date(Date.now());
 
@@ -176,69 +198,25 @@ export class StockMovementRepository {
     stockMovementId: number,
     conferenceId: number
   ): Promise<boolean> {
-    const t = await conection.transaction();
-    try {
-      const user = await TabUsers.findByPk(userId);
-      if (!user) throw new Error("Usuário não encontrado");
+    const user = await TabUsers.findByPk(userId);
+    if (!user) throw new Error("Usuário não encontrado");
 
-      const conference = await TabConfereces.findByPk(conferenceId);
-      if (!conference) throw new Error("Conferencia não encontrada");
+    const conference = await TabConfereces.findByPk(conferenceId);
+    if (!conference) throw new Error("Conferencia não encontrada");
 
-      const stockMovement = (
-        await TabStockMovement.findOne({
-          where: {
-            id: stockMovementId,
-            tb_user_id: userId,
-            tb_conference_id: conferenceId,
-          },
-          include: [{ association: "products" }],
-        })
-      )?.toJSON();
-      if (!stockMovement)
-        throw new Error("Movimento de estoque não encontrado");
+    const stockMovement = await TabStockMovement.findOne({
+      where: {
+        id: stockMovementId,
+        tb_user_id: userId,
+        tb_conference_id: conferenceId,
+      },
+      include: [{ association: "products" }],
+    });
+    if (!stockMovement) throw new Error("Movimento de estoque não encontrado");
 
-      const movementDate = new Date(Date.now());
-
-      const newStockMovement = (
-        await TabStockMovement.create(
-          {
-            tb_user_id: userId,
-            tb_conference_id: conferenceId,
-            movement_description: `Inativação do movimento de estoque Decrilçao: ${stockMovement.movement_description}, ID: ${stockMovementId}, por: fulano`,
-            movement_date: movementDate,
-            ind_active: true,
-          },
-          {
-            transaction: t,
-          }
-        )
-      ).toJSON();
-
-      const promisesProduct: any[] = [];
-
-      stockMovement.products?.forEach(async (product) => {
-        promisesProduct.push(
-          TabProductStockMovement.create(
-            {
-              tb_stock_movement_id: newStockMovement.id || 0,
-              tb_product_id: product.tb_product_id,
-              movement_value: product.movement_value * -1, // inverte os valores
-              type_movement: product.movement_value * -1 < 0 ? "S" : "E",
-            },
-            {
-              transaction: t,
-            }
-          )
-        );
-      });
-
-      await Promise.all(promisesProduct);
-
-      t.commit();
-    } catch (err) {
-      t.rollback();
-      throw err;
-    }
+    await stockMovement.update({
+      ind_active: false,
+    });
 
     return true;
   }
@@ -253,46 +231,59 @@ export class StockMovementRepository {
     const conference = await TabConfereces.findByPk(conferenceId);
     if (!conference) throw new Error("Conferencia não encontrada");
 
-    const currentMovement = await TabProductStockMovement.findAll({
+    const currentMovement = await TabStockMovement.findAll({
       raw: true,
-      attributes: [
-        ["tb_product_id", "productId"],
-        [
-          sequelize.fn("sum", sequelize.col("movement_value")),
-          "currentQuantity",
-        ],
-      ],
+      where: {
+        ind_active: true,
+        tb_user_id: userId,
+        tb_conference_id: conferenceId,
+      },
+      attributes: [],
       include: [
         {
-          association: "product",
-          attributes: [["description", "productDescription"]],
+          association: "products",
+
+          attributes: [
+            ["tb_product_id", "productId"],
+            [
+              sequelize.fn("sum", sequelize.col("movement_value")),
+              "currentQuantity",
+            ],
+          ],
           include: [
             {
-              association: "measure",
-              attributes: [["description", "productMeasurement"]],
-            },
-            {
-              association: "category",
-              attributes: [["description", "productCategory"]],
+              association: "product",
+              attributes: [["description", "productDescription"]],
+              include: [
+                {
+                  association: "measure",
+                  attributes: [["description", "productMeasurement"]],
+                },
+                {
+                  association: "category",
+                  attributes: [["description", "productCategory"]],
+                },
+              ],
             },
           ],
         },
       ],
       group: [
-        "tb_product_id",
-        "product.description",
-        "product.measure.description",
-        "product.category.description",
+        "products.tb_product_id",
+        "products.product.description",
+        "products.product.measure.description",
+        "products.product.category.description",
       ],
     });
 
     return currentMovement?.map((product: any) => {
       return {
-        productId: product.productId,
-        productDescription: product["product.productDescription"],
-        productMeasurement: product["product.measure.productMeasurement"],
-        productCategory: product["product.category.productCategory"],
-        currentQuantity: product.currentQuantity,
+        productId: product["products.productId"],
+        productDescription: product["products.product.productDescription"],
+        productMeasurement:
+          product["products.product.measure.productMeasurement"],
+        productCategory: product["products.product.category.productCategory"],
+        currentQuantity: product["products.currentQuantity"],
       };
     });
   }
