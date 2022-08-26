@@ -126,7 +126,7 @@ export class StockMovementRepository {
       const conference = await TabConfereces.findByPk(conferenceId);
       if (!conference) throw new Error("Conferencia não encontrada");
 
-      const currentStock = await this.getCurrentStock(
+      const { data: currentStock } = await this.getCurrentStock(
         userId.toString(),
         conferenceId.toString()
       );
@@ -223,15 +223,31 @@ export class StockMovementRepository {
 
   async getCurrentStock(
     userId: string,
-    conferenceId: string
-  ): Promise<TypeGetCurrentStock[]> {
+    conferenceId: string,
+    pagination?: PaginationType
+  ): Promise<{
+    data: TypeGetCurrentStock[];
+    totalPages: number;
+  }> {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
     const conference = await TabConfereces.findByPk(conferenceId);
     if (!conference) throw new Error("Conferencia não encontrada");
 
-    const currentMovement = await TabStockMovement.findAll({
+    const offset = pagination?.page
+      ? parseInt(pagination?.page, 10) - 1
+      : undefined;
+    const limit = pagination?.limit
+      ? parseInt(pagination?.limit, 10)
+      : undefined;
+
+    const page = offset && offset !== -1 && limit ? offset * limit : 0;
+
+    const currentMovement = await TabStockMovement.findAndCountAll({
+      limit,
+      subQuery: false,
+      offset: page,
       raw: true,
       where: {
         ind_active: true,
@@ -276,7 +292,7 @@ export class StockMovementRepository {
       ],
     });
 
-    return currentMovement?.map((product: any) => {
+    const dataReturn = currentMovement?.rows?.map((product: any) => {
       return {
         productId: product["products.productId"],
         productDescription: product["products.product.productDescription"],
@@ -286,6 +302,13 @@ export class StockMovementRepository {
         currentQuantity: product["products.currentQuantity"],
       };
     });
+
+    return {
+      data: dataReturn || [],
+      totalPages: parseInt(
+        (limit ? currentMovement.count?.length / limit : 1).toFixed(0)
+      ),
+    };
   }
 
   async getNeededProductsStock(

@@ -143,11 +143,12 @@ export const StockMovementController = {
       if (!conferenceId) throw new Error("ID da conferencia não informada");
 
       const stockMovementRepository = new StockMovementRepository();
-      res
-        .status(200)
-        .json(
-          await stockMovementRepository.getCurrentStock(userId, conferenceId)
-        );
+      res.status(200).json(
+        await stockMovementRepository.getCurrentStock(userId, conferenceId, {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        })
+      );
     } catch (error: any) {
       console.error(error);
       res.status(400).json({
