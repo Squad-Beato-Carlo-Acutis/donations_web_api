@@ -38,6 +38,16 @@ export class ProductsNeededRepository {
     if (!(await TabConfereces.findByPk(conferenceId)))
       throw new Error("Usuário não encontrado");
 
+    if(!data?.length) {
+      await TabProductsNeeded.destroy({
+        where: {
+          tb_conference_id: conferenceId
+        }
+      })
+
+      return []
+    }
+
     return Promise.all(
       data.map(async (product) => {
         const dataInsert: TypeTabProductsNeeded = {
