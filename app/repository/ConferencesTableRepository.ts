@@ -54,7 +54,7 @@ export class ConferencesTableRepository {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
-    const conferenceRegister = await TabConfereces.create({
+    return TabConfereces.create({
       tb_user_id: userId,
       description: conference.description,
       link_avatar: conference.link_avatar,
@@ -64,8 +64,6 @@ export class ConferencesTableRepository {
       opening_hours: conference.opening_hours,
       ind_active: conference.ind_active,
     });
-
-    return conferenceRegister;
   }
 
   async update(
