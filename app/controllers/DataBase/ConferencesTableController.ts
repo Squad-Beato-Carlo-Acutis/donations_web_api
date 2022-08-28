@@ -195,7 +195,7 @@ export const ConferencesTableController = {
 
       const conference = (
         await conferenceRepository.update(userId, conferenceId, {
-          link_image: pathImage.replace(`${process.env.ENV_IMAGE_DIRECTORY || ''}/`, ''),
+          link_avatar: pathImage.replace(`${process.env.ENV_IMAGE_DIRECTORY || ''}/`, ''),
         } as any)
       ).toJSON();
 
