@@ -37,6 +37,7 @@ routes.delete("/api/v1/user/:userId", userAuth, UserTableController.delete);
 
 // Routes Conferences
 routes.get("/api/v1/conferences", userAuth, ConferencesTableController.getAll);
+routes.get("/api/v1/listconferences", ConferencesTableController.listConferences);
 routes.post("/api/v1/conferences", userAuth, ConferencesTableController.create);
 routes.post(
   "/api/v1/conferences/:conferenceId/uploadimg",

@@ -18,7 +18,7 @@ export class ConferencesTableRepository {
   }
 
   async searchAll(
-    userId: number,
+    userId?: number,
     pagination?: PaginationType
   ): Promise<{
     data: Array<TabConfereces>;
@@ -36,9 +36,11 @@ export class ConferencesTableRepository {
     const conferences = await TabConfereces.findAndCountAll({
       limit,
       offset: page,
-      where: {
-        tb_user_id: userId,
-      },
+      where: userId
+        ? {
+            tb_user_id: userId,
+          }
+        : undefined,
     });
 
     return {

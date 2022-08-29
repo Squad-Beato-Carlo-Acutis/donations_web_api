@@ -178,7 +178,7 @@ export const ConferencesTableController = {
   },
 
   uploadImage: async (req: any, res: any) => {
-    let pathImage = null
+    let pathImage = null;
     try {
       const { userId, conferenceId } = req.params;
 
@@ -195,7 +195,10 @@ export const ConferencesTableController = {
 
       const conference = (
         await conferenceRepository.update(userId, conferenceId, {
-          link_avatar: pathImage.replace(`${process.env.ENV_IMAGE_DIRECTORY || ''}/`, ''),
+          link_avatar: pathImage.replace(
+            `${process.env.ENV_IMAGE_DIRECTORY || ""}/`,
+            ""
+          ),
         } as any)
       ).toJSON();
 
@@ -207,10 +210,40 @@ export const ConferencesTableController = {
         },
       });
     } catch (error: any) {
-      deleteImage(pathImage || '');
+      deleteImage(pathImage || "");
 
       res.status(400).json({
         errorMessage: "Erro no upload da imagem da conferencia.",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
+  },
+
+  listConferences: async (req: any, res: any) => {
+    try {
+      const conferenceRepository = new ConferencesTableRepository();
+
+      const { data: conferences } = await conferenceRepository.searchAll(
+        undefined,
+        {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        }
+      );
+
+      res.status(200).json(
+        conferences.map((conference: any) => {
+          return {
+            conferenceId: conference.id,
+            userId: conference.tb_user_id,
+            conferenceDescription: conference.description,
+          };
+        })
+      );
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro ao tentar buscar todas as conferencias",
         error: error.message ? error.message : error,
         statusCode: 400,
       });
