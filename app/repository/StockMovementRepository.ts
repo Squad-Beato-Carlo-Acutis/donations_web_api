@@ -1,11 +1,15 @@
 import sequelize from "sequelize";
 import { conection } from "../database";
 import { TabConfereces } from "../models/TabConfereces";
-import { TabProductsNeeded } from "../models/TabProductsNeeded";
+import {
+  TabProductsNeeded,
+  TypeProductsNeededRepository,
+} from "../models/TabProductsNeeded";
 import { TabProductStockMovement } from "../models/TabProductStockMovement";
 import { TabStockMovement } from "../models/TabStockMovement";
 import { TabUsers } from "../models/TabUsers";
 import { PaginationType } from "../types/PaginationType";
+import { ProductsNeededRepository } from "./ProductsNeededRepository";
 
 type TypeProductMovement = {
   productId: number;
@@ -321,80 +325,67 @@ export class StockMovementRepository {
     const conference = await TabConfereces.findByPk(conferenceId);
     if (!conference) throw new Error("Conferencia não encontrada");
 
-    const productsNeeded = await TabProductsNeeded.findAll({
-      where: {
-        tb_user_id: userId,
-        tb_conference_id: conferenceId,
-      },
-    });
+    const productsNeededRepository = new ProductsNeededRepository();
 
-    const currentMovement = await TabProductStockMovement.findAll({
-      raw: true,
-      attributes: [
-        ["tb_product_id", "productId"],
-        [
-          sequelize.fn("sum", sequelize.col("movement_value")),
-          "currentQuantity",
-        ],
-      ],
-      include: [
-        {
-          association: "product",
-          attributes: [["description", "productDescription"]],
-          include: [
-            {
-              association: "measure",
-              attributes: [["description", "productMeasurement"]],
-            },
-            {
-              association: "category",
-              attributes: [["description", "productCategory"]],
-            },
-          ],
-        },
-      ],
-      where: {
-        tb_product_id: productsNeeded.map(
-          (productNeeded: any) => productNeeded.tb_product_id
-        ),
-      },
-      group: [
-        "tb_product_id",
-        "product.description",
-        "product.measure.description",
-        "product.category.description",
-      ],
-    });
+    const data = await productsNeededRepository.searchAllProducts(
+      userId,
+      conferenceId
+    );
 
-    return productsNeeded?.map((productNeeded: any) => {
-      const productMovement: any = currentMovement.filter(
-        (product: any) => product.id === productNeeded.productId
-      );
-
-      if (!productMovement?.length) return;
-
-      const [
-        {
-          productId,
-          ["product.productDescription"]: productDescription,
-          ["product.measure.productMeasurement"]: productMeasurement,
-          ["product.category.productCategory"]: productCategory,
-          currentQuantity,
-        },
-      ] = productMovement;
-
-      const quantityNeeded =
-        currentQuantity > productNeeded.quantity
-          ? 0
-          : productNeeded.quantity - currentQuantity;
-
+    const productsNeeded = data.map<TypeProductsNeededRepository>((product) => {
       return {
-        productId,
-        productDescription,
-        productMeasurement,
-        productCategory,
-        quantityNeeded,
+        productId: product.tb_product_id,
+        productDescription: product.products.description,
+        productMeasurement: product.products.measure.abbreviation,
+        productCategory: product.products.category.description,
+        productFullMeasurement: product.products.measure.description,
+        productLinkImage: product.products.link_image,
+        quantity: product.quantity,
       };
     });
+
+    const { data: currentMovement } = await this.getCurrentStock(
+      userId.toString(),
+      conferenceId.toString()
+    );
+
+    return productsNeeded
+      ?.map((productNeeded: any) => {
+        const {
+          productId,
+          productDescription,
+          productFullMeasurement: productMeasurement,
+          productCategory,
+          quantity,
+        } = productNeeded;
+
+        const productMovement: any = currentMovement.find((product) => {
+          return product.productId === productId;
+        });
+
+        if (!productMovement) {
+          return {
+            productId,
+            productDescription,
+            productMeasurement,
+            productCategory,
+            quantityNeeded: quantity,
+          };
+        }
+
+        const { currentQuantity } = productMovement;
+
+        const quantityNeeded =
+          currentQuantity > quantity ? 0 : quantity - currentQuantity;
+
+        return {
+          productId,
+          productDescription,
+          productMeasurement,
+          productCategory,
+          quantityNeeded,
+        };
+      })
+      .filter((item) => item.quantityNeeded > 0);
   }
 }
