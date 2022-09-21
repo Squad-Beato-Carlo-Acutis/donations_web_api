@@ -24,6 +24,7 @@ export const UserTableController = {
             email: yup.string().email().required(),
             pws: yup.string().min(8).required(),
             username: yup.string().required(),
+            nickname: yup.string().required(),
             ind_active: yup.boolean().notRequired(),
             type_user: yup.string().notRequired(),
           })
@@ -31,6 +32,7 @@ export const UserTableController = {
             email: yup.string().email().notRequired(),
             pws: yup.string().min(8).notRequired(),
             username: yup.string().notRequired(),
+            nickname: yup.string().notRequired(),
             ind_active: yup.boolean().notRequired(),
             type_user: yup.string().notRequired(),
           });
@@ -94,6 +96,7 @@ export const UserTableController = {
         id: user.id,
         email: user.email,
         username: user.username,
+        nickname: user.nickname,
         responseInfo: {
           statusCode: 200,
           msg: "Usuário cadastrado com sucesso",
@@ -128,6 +131,7 @@ export const UserTableController = {
         id: user.id,
         email: user.email,
         username: user.username,
+        nickname: user.nickname,
         responseInfo: {
           statusCode: 200,
           msg: "Usuário atualizado com sucesso",
@@ -154,6 +158,7 @@ export const UserTableController = {
         id: user.id,
         email: user.email,
         username: user.username,
+        nickname: user.nickname,
         responseInfo: {
           statusCode: 200,
           msg: "Usuário encontrado com sucesso",
@@ -200,8 +205,8 @@ export const UserTableController = {
         throw new Error("os campos email e pws são obrigátórios");
 
       const userRepository = new UserTableRepository();
-      const { userFound, userId, userName, typeUser } =
-        await userRepository.login(email, pws);
+      const { userFound, userId, userName, typeUser, nickname } =
+      await userRepository.login(email, pws);
 
       if (userFound) {
         const token = await encryptToken({
@@ -219,6 +224,7 @@ export const UserTableController = {
           userData: {
             userId,
             userName,
+            nickname,
             typeUser,
           },
         });

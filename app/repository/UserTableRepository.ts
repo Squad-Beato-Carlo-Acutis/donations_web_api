@@ -45,6 +45,7 @@ export class UserTableRepository {
       email: user.email,
       pws: encryptedPassword,
       username: user.username,
+      nickname: user.nickname,
       ind_active: true,
     };
 
@@ -59,7 +60,10 @@ export class UserTableRepository {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
-    await user.update(data);
+    await user.update({
+      ...data,
+      pws: encryptSha512(data.pws)
+    });
 
     return user;
   }
@@ -80,6 +84,7 @@ export class UserTableRepository {
     userFound: boolean;
     userId?: number;
     userName?: string;
+    nickname?: string;
     typeUser?: string;
   }> {
     const encryptedPassword = encryptSha512(pws);
@@ -102,6 +107,7 @@ export class UserTableRepository {
       userFound: true,
       userId: userData.id,
       userName: userData.username,
+      nickname: userData.nickname,
       typeUser: userData.type_user,
     };
   }

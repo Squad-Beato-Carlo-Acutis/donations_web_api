@@ -41,6 +41,9 @@ export class ConferencesTableRepository {
             tb_user_id: userId,
           }
         : undefined,
+      include: [
+        {association: "users", attributes: [["nickname", "nickname"]],}
+      ]
     });
 
     return {
@@ -64,6 +67,7 @@ export class ConferencesTableRepository {
       title_address: conference.title_address,
       address: conference.address,
       opening_hours: conference.opening_hours,
+      map_iframe: conference.map_iframe,
       ind_active: conference.ind_active,
     });
   }
@@ -78,7 +82,7 @@ export class ConferencesTableRepository {
 
     const conference = await TabConfereces.findByPk(conferenceId);
     if (!conference) throw new Error("Conferencia não encontrada");
-
+    
     await conference.update(data);
 
     return conference;

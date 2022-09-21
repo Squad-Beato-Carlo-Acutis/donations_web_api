@@ -37,7 +37,10 @@ routes.delete("/api/v1/user/:userId", userAuth, UserTableController.delete);
 
 // Routes Conferences
 routes.get("/api/v1/conferences", userAuth, ConferencesTableController.getAll);
-routes.get("/api/v1/listconferences", ConferencesTableController.listConferences);
+routes.get(
+  "/api/v1/listconferences",
+  ConferencesTableController.listConferences
+);
 routes.post("/api/v1/conferences", userAuth, ConferencesTableController.create);
 routes.post(
   "/api/v1/conferences/:conferenceId/uploadimg",
@@ -48,6 +51,11 @@ routes.post(
 routes.get(
   "/api/v1/conferences/:conferenceId",
   userAuth,
+  ConferencesTableController.getById
+);
+routes.get(
+  "/api/v1/user/:userId/conferences/:conferenceId",
+  // userAuth,
   ConferencesTableController.getById
 );
 routes.patch(
@@ -164,21 +172,37 @@ routes.get(
   StockMovementController.getCurrentStock
 );
 routes.get(
-  "/api/v1/conference/:conferenceId/neededproductsstock",
-  userAuth,
+  "/api/v1/user/:userId/conference/:conferenceId/neededproductsstock",
+  // userAuth,
   StockMovementController.getNeededProductsStock
 );
 
 // Private routes Measures
 routes.get("/api/v1/measure", userAuth, MeasureTableController.getAll);
 routes.post("/api/v1/measure", userAuth, MeasureTableController.create);
-routes.patch("/api/v1/measure/:measureId", userAuth, MeasureTableController.update);
-routes.delete("/api/v1/measure/:measureId", userAuth, MeasureTableController.delete);
+routes.patch(
+  "/api/v1/measure/:measureId",
+  userAuth,
+  MeasureTableController.update
+);
+routes.delete(
+  "/api/v1/measure/:measureId",
+  userAuth,
+  MeasureTableController.delete
+);
 
 // Private routes Categoies
 routes.get("/api/v1/category", userAuth, CategoryTableController.getAll);
 routes.post("/api/v1/category", userAuth, CategoryTableController.create);
-routes.patch("/api/v1/category/:categoryId", userAuth, CategoryTableController.update);
-routes.delete("/api/v1/category/:categoryId", userAuth, CategoryTableController.delete);
+routes.patch(
+  "/api/v1/category/:categoryId",
+  userAuth,
+  CategoryTableController.update
+);
+routes.delete(
+  "/api/v1/category/:categoryId",
+  userAuth,
+  CategoryTableController.delete
+);
 
 export { routes };

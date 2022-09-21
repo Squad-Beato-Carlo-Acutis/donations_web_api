@@ -5,6 +5,7 @@ export type TypeTabUsers = {
   email: string,
   pws: string,
   username: string,
+  nickname: string,
   ind_active: boolean,
   type_user?: string
 };
@@ -15,6 +16,7 @@ export class TabUsers extends Model<TypeTabUsers> {
       email: DataTypes.STRING,
       pws: DataTypes.STRING,
       username: DataTypes.STRING,
+      nickname: DataTypes.STRING,
       ind_active: DataTypes.BOOLEAN,
       type_user: DataTypes.STRING,
     }, {
