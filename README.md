@@ -44,7 +44,7 @@ ENV_TOKEN_EXPIRATION= #tempo de expiração do token em milissegundos
 ENV_IMAGE_DIRECTORY= #diretório onde as imagems são salvas
 ```
 
-logo após configurar o adquivo
+logo após configurar o arquivo
 
 ```bash
 # Execute a aplicação em modo de desenvolvimento
