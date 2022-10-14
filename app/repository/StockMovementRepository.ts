@@ -357,6 +357,8 @@ export class StockMovementRepository {
           productFullMeasurement: productMeasurement,
           productCategory,
           quantity,
+          productLinkImage,
+          productFullMeasurement,
         } = productNeeded;
 
         const productMovement: any = currentMovement.find((product) => {
@@ -370,6 +372,8 @@ export class StockMovementRepository {
             productMeasurement,
             productCategory,
             quantityNeeded: quantity,
+            productLinkImage,
+            productFullMeasurement,
           };
         }
 
@@ -384,6 +388,8 @@ export class StockMovementRepository {
           productMeasurement,
           productCategory,
           quantityNeeded,
+          productLinkImage,
+          productFullMeasurement,
         };
       })
       .filter((item) => item.quantityNeeded > 0);

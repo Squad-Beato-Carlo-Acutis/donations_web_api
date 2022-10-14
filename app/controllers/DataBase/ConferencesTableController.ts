@@ -1,7 +1,6 @@
 import * as yup from "yup";
 import { pt } from "yup-locale-pt";
 import { compressImage, deleteImage } from "../../helpers/helperImage";
-import { customMulter } from "../../helpers/uploadImages";
 import { TypeTabConfereces } from "../../models/TabConfereces";
 import { ConferencesTableRepository } from "../../repository/ConferencesTableRepository";
 
@@ -20,6 +19,7 @@ export const ConferencesTableController = {
             title_address: yup.string().required(),
             address: yup.string().required(),
             opening_hours: yup.string().required(),
+            map_iframe: yup.string().required(),
             ind_active: yup.boolean().notRequired(),
           })
         : yup.object().shape({
@@ -28,6 +28,7 @@ export const ConferencesTableController = {
             title_address: yup.string().notRequired(),
             address: yup.string().notRequired(),
             opening_hours: yup.string().notRequired(),
+            map_iframe: yup.string().notRequired(),
             ind_active: yup.boolean().notRequired(),
           });
 
@@ -178,7 +179,7 @@ export const ConferencesTableController = {
   },
 
   uploadImage: async (req: any, res: any) => {
-    let pathImage = null
+    let pathImage = null;
     try {
       const { userId, conferenceId } = req.params;
 
@@ -195,7 +196,10 @@ export const ConferencesTableController = {
 
       const conference = (
         await conferenceRepository.update(userId, conferenceId, {
-          link_avatar: pathImage.replace(`${process.env.ENV_IMAGE_DIRECTORY || ''}/`, ''),
+          link_avatar: pathImage.replace(
+            `${process.env.ENV_IMAGE_DIRECTORY || ""}/`,
+            ""
+          ),
         } as any)
       ).toJSON();
 
@@ -207,10 +211,41 @@ export const ConferencesTableController = {
         },
       });
     } catch (error: any) {
-      deleteImage(pathImage || '');
+      deleteImage(pathImage || "");
 
       res.status(400).json({
         errorMessage: "Erro no upload da imagem da conferencia.",
+        error: error.message ? error.message : error,
+        statusCode: 400,
+      });
+    }
+  },
+
+  listConferences: async (req: any, res: any) => {
+    try {
+      const conferenceRepository = new ConferencesTableRepository();
+
+      const { data: conferences } = await conferenceRepository.searchAll(
+        undefined,
+        {
+          limit: req?.query?.limit,
+          page: req?.query?.page,
+        }
+      );
+
+      res.status(200).json(
+        conferences.map((conference: any) => {
+          return {
+            conferenceId: conference.id,
+            userId: conference.tb_user_id,
+            conferenceDescription: conference.description,
+            userNickName: conference.users.nickname,
+          };
+        })
+      );
+    } catch (error: any) {
+      res.status(400).json({
+        errorMessage: "Erro ao tentar buscar todas as conferencias",
         error: error.message ? error.message : error,
         statusCode: 400,
       });
