@@ -32,6 +32,7 @@ routes.get("/api/v1/user", userAuth, UserTableController.getById);
 // Private routes User
 routes.get("/api/v1/users", userAuth, UserTableController.getAll);
 routes.post("/api/v1/user", userAuth, UserTableController.create);
+routes.patch("/api/v1/user", userAuth, UserTableController.update);
 routes.patch("/api/v1/user/:userId", userAuth, UserTableController.update);
 routes.delete("/api/v1/user/:userId", userAuth, UserTableController.delete);
 

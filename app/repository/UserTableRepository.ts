@@ -60,10 +60,18 @@ export class UserTableRepository {
     const user = await TabUsers.findByPk(userId);
     if (!user) throw new Error("Usuário não encontrado");
 
-    await user.update({
+    let dataUpdate = {
       ...data,
-      pws: encryptSha512(data.pws)
-    });
+    };
+
+    if (data.pws) {
+      dataUpdate = {
+        ...dataUpdate,
+        pws: encryptSha512(data.pws),
+      };
+    }
+
+    await user.update(dataUpdate);
 
     return user;
   }
