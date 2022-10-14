@@ -1,6 +1,6 @@
 {
   "name": "donations_web_api",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "index.tsx",
   "repository": "https://github.com/luizbp/donations_web_api.git",
   "author": "Luiz Carlos B Pereira <carlinhospereira12@hotmail.com>",
