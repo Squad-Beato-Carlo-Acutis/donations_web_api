@@ -113,15 +113,19 @@ export const UserTableController = {
 
   update: async (req: any, res: any) => {
     try {
-      if (!checkPermission(req.cdTypeUser, PM_UPDATE_USER)) {
+      const { userId } = req.params;
+      if (!userId) throw new Error("ID do usuário não informado");
+
+      if (
+        !checkPermission(req.cdTypeUser, PM_UPDATE_USER) &&
+        userId !== req.userId // Caso passe o ID do user por parametro ele verifica se é o mesmo do token
+      ) {
         return res.status(403).json({
           errorMessage: "Este usuário não tem permissão para acessar essa rota",
           statusCode: 403,
         });
       }
 
-      const { userId } = req.params;
-      if (!userId) throw new Error("ID do usuário não informado");
       const userData = req.body;
       await UserTableController.fieldValidation(userData, "update");
       const userRepository = new UserTableRepository();
@@ -206,7 +210,7 @@ export const UserTableController = {
 
       const userRepository = new UserTableRepository();
       const { userFound, userId, userName, typeUser, nickname } =
-      await userRepository.login(email, pws);
+        await userRepository.login(email, pws);
 
       if (userFound) {
         const token = await encryptToken({
