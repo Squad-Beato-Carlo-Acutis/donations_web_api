@@ -47,6 +47,9 @@ ENV_IMAGE_DIRECTORY= #diretório onde as imagems são salvas
 logo após configurar o arquivo
 
 ```bash
+# Execute as migrations para configurar o banco de dados
+yarn sequelize db:migrate
+
 # Execute a aplicação em modo de desenvolvimento
 $ yarn dev
 
