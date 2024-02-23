@@ -48,6 +48,7 @@
   "scripts": {
     "test": "jest",
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules app/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "sequelize db:migrate && node ./build/server.js"
   }
 }

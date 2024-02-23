@@ -1,4 +1,4 @@
-require('dotenv').config()
+require("dotenv").config();
 
 module.exports = {
   dialect: process.env.ENV_DATABASE_DIALECT,
@@ -9,5 +9,5 @@ module.exports = {
   define: {
     timestamps: true,
     underscored: true,
-  }
-}
+  },
+};
