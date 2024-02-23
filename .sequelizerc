@@ -1,6 +1,20 @@
-const path = require("path")
+const path = require("path");
 
-module.exports = {
-  config: path.resolve(__dirname, 'app', 'config', 'database.js'),
-  'migrations-path': path.resolve(__dirname, 'app', 'database', 'migrations')
+const isProduction = process.env.NODE_ENV === "production";
+
+if (isProduction) {
+  module.exports = {
+    config: path.resolve(__dirname, "build", "config", "database.js"),
+    "migrations-path": path.resolve(
+      __dirname,
+      "build",
+      "database",
+      "migrations"
+    ),
+  };
+} else {
+  module.exports = {
+    config: path.resolve(__dirname, "app", "config", "database.js"),
+    "migrations-path": path.resolve(__dirname, "app", "database", "migrations"),
+  };
 }
