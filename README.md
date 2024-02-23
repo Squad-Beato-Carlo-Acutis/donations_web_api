@@ -12,7 +12,8 @@
 ### Pré-requisitos
 
 Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
-- [Git](https://git-scm.com) 
+
+- [Git](https://git-scm.com)
 - [Node.js](https://nodejs.org/en/)
 - [Yarn](https://yarnpkg.com/getting-started/install)
 - [XAMPP (para rodar o mysql server)](https://www.apachefriends.org/pt_br/index.html)
@@ -33,6 +34,7 @@ $ yarn
 ```
 
 depois crie um arquivo na pasta raiz do projeto com o nome `.env` e copie o conteudo do arquivo `.env.example` sendo:
+
 ```bash
 ENV_DATABASE_DIALECT= #banco ex: mysql
 ENV_DATABASE_HOST= #host do banco ex: localhost
@@ -55,4 +57,16 @@ yarn sequelize db:migrate
 $ yarn dev
 
 # O servidor inciará na porta:3333 - caso queira alterar, altere no arquivo app/server.ts
+```
+
+### Utilizando o docker (NEW)
+
+para buildar a imagem tanto do MYSQL que é necessário para rodar o app, quanto a do próprio app, basta executar o comando abaixo:
+
+**_Atenção, é necessário ter o `docker` rodando na sua maquina_**
+
+```bash
+
+docker compose up -d
+
 ```
