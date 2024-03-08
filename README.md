@@ -61,7 +61,9 @@ $ yarn dev
 
 ### Utilizando o docker (NEW)
 
-para buildar a imagem tanto do MYSQL que é necessário para rodar o app, quanto a do próprio app, basta executar o comando abaixo:
+Primeiro configure as variaveis de ambiente que são iguais as informadas acima no arquivo `compose.yaml`
+
+Para buildar a imagem tanto do MYSQL que é necessário para rodar o app, quanto a do próprio app, basta executar o comando abaixo:
 
 **_Atenção, é necessário ter o `docker` rodando na sua maquina_**
 

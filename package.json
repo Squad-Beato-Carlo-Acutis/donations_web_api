@@ -12,6 +12,12 @@
   },
   "lint-staged": {},
   "dependencies": {
+    "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/exporter-zipkin": "^1.22.0",
+    "@opentelemetry/resources": "^1.22.0",
+    "@opentelemetry/sdk-trace-base": "^1.22.0",
+    "@opentelemetry/sdk-trace-node": "^1.22.0",
+    "@opentelemetry/semantic-conventions": "^1.22.0",
     "@sequelize/core": "^7.0.0-alpha.10",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",

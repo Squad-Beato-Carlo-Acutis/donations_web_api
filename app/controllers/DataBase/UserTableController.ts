@@ -10,6 +10,10 @@ import {
 import { encryptToken } from "../../helpers/encrytToken";
 import { TypeTabUsers } from "../../models/TabUsers";
 import { UserTableRepository } from "../../repository/UserTableRepository";
+import { ZipkinExporter } from "@opentelemetry/exporter-zipkin";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+import opentelemetry from "@opentelemetry/api";
 
 // UserTableController
 export const UserTableController = {
@@ -203,6 +207,25 @@ export const UserTableController = {
 
   login: async (req: any, res: any) => {
     try {
+      const serviceName = "basic-service";
+
+      // Configure span processor to send spans to the exporter
+      const exporter = new ZipkinExporter({
+        url: "http://0.0.0.0:9411/api/v2/spans",
+        serviceName,
+      });
+
+      const tracerProvider = new NodeTracerProvider({});
+
+      tracerProvider.register();
+
+      tracerProvider.addSpanProcessor(new BatchSpanProcessor(exporter));
+
+      const tracer = opentelemetry.trace.getTracer("example-basic-tracer-node");
+
+      const span = tracer.startSpan("main");
+
+      span.addEvent("teste");
       const { email, pws } = req.body;
 
       if (!email || !pws)
@@ -241,6 +264,7 @@ export const UserTableController = {
           },
         });
       }
+      span.end();
     } catch (error: any) {
       console.error(error);
       res.status(400).json({
